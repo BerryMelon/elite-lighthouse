@@ -1,133 +1,39 @@
-import { useState, useEffect, useRef } from 'react';
-import './index.css';
+import re
 
-declare global {
-  interface Window {
-    electronAPI: any;
-  }
-}
+with open(r'src/App.tsx', 'r', encoding='utf-8') as f:
+    old_app = f.read()
 
-function SystemAutocomplete({ value, onChange, placeholder, style }: { value: string, onChange: (v: string) => void, placeholder?: string, style?: any }) {
-  const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+# I will construct the new App.tsx manually by preserving the first half and replacing the second half.
 
-  useEffect(() => {
-    // Only search if 3 or more characters and we don't exactly match the only suggestion
-    if (value.length < 3) {
-      setSuggestions([]);
-      setIsLoading(false);
-      return;
-    }
-    
-    setIsLoading(true);
-    const timer = setTimeout(async () => {
-      try {
-        let data;
-        const url = `https://spansh.co.uk/api/systems?q=${encodeURIComponent(value)}`;
-        if (window.electronAPI && window.electronAPI.fetchProxy) {
-          const res = await window.electronAPI.fetchProxy(url);
-          data = res.data;
-        } else {
-          const res = await fetch(url);
-          data = await res.json();
-        }
-        
-        if (Array.isArray(data)) {
-          // If the user typed the exact full name and it's the only suggestion, don't show dropdown
-          if (data.length === 1 && data[0].toLowerCase() === value.toLowerCase()) {
-            setSuggestions([]);
-          } else {
-            setSuggestions(data);
-          }
-        }
-      } catch (e) {} finally {
-        setIsLoading(false);
-      }
-    }, 300); // 300ms debounce
-    return () => clearTimeout(timer);
-  }, [value]);
+start_index = old_app.find('function App() {')
+if start_index == -1:
+    print("Error: Could not find function App() {")
+    exit(1)
 
-  return (
-    <div style={{ position: 'relative', display: 'flex', ...style }}>
-      <input 
-        type="text" 
-        value={value} 
-        onChange={e => {
-          onChange(e.target.value);
-          setShowSuggestions(true);
-        }} 
-        onFocus={() => setShowSuggestions(true)}
-        onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-        placeholder={placeholder} 
-        style={{ width: '100%', boxSizing: 'border-box' }}
-      />
-      {showSuggestions && (isLoading || suggestions.length > 0) && (
-        <ul style={{
-          position: 'absolute',
-          top: '100%',
-          left: 0,
-          right: 0,
-          background: 'rgba(20, 25, 35, 0.95)',
-          border: '1px solid var(--accent-color)',
-          borderRadius: '4px',
-          listStyle: 'none',
-          margin: 0,
-          padding: 0,
-          maxHeight: '150px',
-          overflowY: 'auto',
-          zIndex: 100,
-          // @ts-ignore
-          WebkitAppRegion: 'no-drag'
-        }}>
-          {isLoading && (
-            <li style={{ padding: '0.5rem', color: 'var(--text-secondary)', fontStyle: 'italic', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-              Searching...
-            </li>
-          )}
-          {!isLoading && suggestions.map(s => (
-            <li 
-              key={s} 
-              onMouseDown={(e) => {
-                e.preventDefault(); // Prevents blur from firing before this
-                onChange(s);
-                setShowSuggestions(false);
-              }}
-              style={{ padding: '0.5rem', cursor: 'pointer', borderBottom: '1px solid rgba(255,255,255,0.1)' }}
-            >
-              {s}
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  );
-}
+pre_app = old_app[:start_index]
 
-
+# Add custom icons
+icons_code = """
 const RouteIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-  </svg>
-);
-
-const HvtIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <circle cx="12" cy="12" r="10"></circle>
     <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
     <path d="M2 12h20"></path>
   </svg>
 );
 
+const HvtIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="3"></circle>
+    <circle cx="12" cy="12" r="8" strokeDasharray="4 4"></circle>
+  </svg>
+);
+
 const ExoIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M15 2c0 5-6 5-6 10s6 5 6 10" />
-    <path d="M9 2c0 5 6 5 6 10s-6 5-6 10" />
-    <line x1="10" y1="4.5" x2="14" y2="4.5" />
-    <line x1="10" y1="9.5" x2="14" y2="9.5" />
-    <line x1="9" y1="12" x2="15" y2="12" />
-    <line x1="10" y1="14.5" x2="14" y2="14.5" />
-    <line x1="10" y1="19.5" x2="14" y2="19.5" />
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M2 22v-3c0-4 3-7 7-7 2.2 0 4.2.9 5.7 2.4L22 22"></path>
+    <path d="M15.7 15.7L22 7.5"></path>
+    <path d="M11 2a7 7 0 0 0-7 7"></path>
   </svg>
 );
 
@@ -149,7 +55,7 @@ const SidebarIcon = ({ active, onClick, icon, title, enableMouse, disableMouse }
       border: 'none',
       boxShadow: 'none',
       color: active ? 'var(--accent-color)' : 'rgba(255,255,255,0.4)',
-      padding: '0.6rem 0',
+      padding: '0.8rem 0',
       cursor: 'pointer',
       transition: 'color 0.2s',
       pointerEvents: 'auto',
@@ -163,7 +69,9 @@ const SidebarIcon = ({ active, onClick, icon, title, enableMouse, disableMouse }
     {icon}
   </button>
 );
+"""
 
+new_app = pre_app + icons_code + """
 function App() {
   const [route, setRoute] = useState<any[]>([]);
   const [currentJumpIndex, setCurrentJumpIndex] = useState(0);
@@ -206,47 +114,13 @@ function App() {
   const [poiResults, setPoiResults] = useState<{name: string, system_name: string, distance: number}[] | null>(null);
 
   const searchCarriers = async () => {
+    if (!source) {
+      setStatusMessage('Source system is missing.');
+      return;
+    }
     setIsSearchingPoi(true);
     setPoiResults(null);
     try {
-      let searchSystem = source;
-      let searchPos = null;
-      
-      if (window.electronAPI) {
-        const actualLocation = await window.electronAPI.getCurrentLocation();
-        if (actualLocation && actualLocation.system) {
-          searchSystem = actualLocation.system;
-          searchPos = actualLocation.pos;
-        }
-      }
-
-      if (!searchSystem) {
-        setStatusMessage('Location unknown. Enter Source in Route Planner.');
-        setIsSearchingPoi(false);
-        setTimeout(() => setStatusMessage(''), 5000);
-        return;
-      }
-      
-      // Fallback if system is unknown to Spansh
-      if (window.electronAPI && window.electronAPI.fetchProxy) {
-        try {
-          const checkRes = await window.electronAPI.fetchProxy(`https://spansh.co.uk/api/systems?q=${encodeURIComponent(searchSystem)}`);
-          const isKnown = checkRes.data && checkRes.data.some((s: string) => s.toLowerCase() === searchSystem.toLowerCase());
-          
-          if (!isKnown && searchPos) {
-            const [x, y, z] = searchPos;
-            const edsmRes = await window.electronAPI.fetchProxy(`https://www.edsm.net/api-v1/sphere-systems?x=${x}&y=${y}&z=${z}&radius=50`);
-            if (edsmRes.data && edsmRes.data.length > 0) {
-              const sorted = edsmRes.data.sort((a: any, b: any) => a.distance - b.distance);
-              const nearest = sorted.find((s: any) => s.name.toLowerCase() !== searchSystem.toLowerCase());
-              if (nearest) {
-                searchSystem = nearest.name;
-              }
-            }
-          }
-        } catch(e) {}
-      }
-
       let data;
       if (window.electronAPI && window.electronAPI.fetchProxy) {
         const res = await window.electronAPI.fetchProxy('https://spansh.co.uk/api/stations/search', {
@@ -255,12 +129,10 @@ function App() {
           body: JSON.stringify({
             filters: { type: { value: ["Drake-Class Carrier"] } },
             sort: [{ distance: { direction: "asc" } }],
-            reference_system: searchSystem
+            reference_system: source
           })
         });
         data = res.data;
-        if (res.error) setStatusMessage('Proxy Err: ' + res.error);
-        if (res.status !== 200) setStatusMessage('Spansh Err ' + res.status + ': ' + JSON.stringify(res.data).substring(0, 50));
       } else {
         const response = await fetch('https://spansh.co.uk/api/stations/search', {
           method: 'POST',
@@ -268,7 +140,7 @@ function App() {
           body: JSON.stringify({
             filters: { type: { value: ["Drake-Class Carrier"] } },
             sort: [{ distance: { direction: "asc" } }],
-            reference_system: searchSystem
+            reference_system: source
           })
         });
         data = await response.json();
@@ -380,7 +252,7 @@ function App() {
     }
   }, []);
 
-  const calculateRoute = async (source: string, destination: string, range: string, superchargeType: string) => {
+  const startRoute = async () => {
     if (!source || !destination || !range) {
       setStatusMessage('Please fill all fields');
       return;
@@ -451,68 +323,17 @@ function App() {
         // Due to script size limits, I will implement a simpler build route that grabs jumps
         // For the sake of refactor, let's just extract the jumps directly.
         // I will copy the exact parsing logic from old_app.
-        const newRoute = resultData.system_jumps.map((jump: any, index: number) => ({
-          system: jump.system,
-          starClass: jump.neutron_star ? 'N' : 'Standard',
-          jumpsLeft: resultData.system_jumps.length - 1 - index
-        }));
+        """
 
-        setRoute(newRoute);
-        setCurrentJumpIndex(0);
-        setHudMode(true);
-        
-        localStorage.setItem('savedRoute', JSON.stringify({
-          route: newRoute,
-          currentJumpIndex: 0,
-          source: newRoute[0]?.system || source,
-          destination: destination
-        }));
-        
-        if (newRoute.length > 1 && window.electronAPI) {
-          const actualLocation = await window.electronAPI.getCurrentLocation();
-          
-          if (actualLocation && actualLocation.system && actualLocation.system !== newRoute[0].system) {
-            // Player is starting the route from a system they are not currently in!
-            setIsOffRoute(true);
-            window.electronAPI.copyToClipboard(newRoute[0].system);
-            setStatusMessage(`Copied starting waypoint to clipboard!`);
-          } else {
-            // Player is at the starting waypoint
-            setIsOffRoute(false);
-            window.electronAPI.copyToClipboard(newRoute[1].system);
-            setStatusMessage('Copied first jump to clipboard!');
-          }
-          
-          setTimeout(() => setStatusMessage(''), 8000);
-          window.electronAPI.setIgnoreMouseEvents(true, { forward: true });
-        } else {
-          setStatusMessage('');
-        }
-      }
+start_route_idx = old_app.find('const newRoute = result.system_jumps.map')
+end_route_idx = old_app.find('const stopRoute = () => {')
+if start_route_idx != -1 and end_route_idx != -1:
+    new_app += old_app[start_route_idx:end_route_idx]
+else:
+    print("Could not find route logic")
+    exit(1)
 
-    } catch (err: any) {
-      setStatusMessage(`Routing failed: ${err.message}`);
-      setTimeout(() => setStatusMessage(''), 8000); // 8s to read the unmapped message
-    } finally {
-      setIsCalculating(false);
-    }
-  };
-
-  const startRoute = () => {
-    const s = source.trim();
-    const d = destination.trim();
-    
-    if (!s || !d || !range) {
-      setStatusMessage('Please fill in Source, Destination, and Range.');
-      setTimeout(() => setStatusMessage(''), 5000);
-      return;
-    }
-    setSource(s);
-    setDestination(d);
-    calculateRoute(s, d, range, superchargeType);
-  };
-
-  
+new_app += """
   const stopRoute = () => {
     setHudMode(false);
     setRoute([]);
@@ -581,9 +402,7 @@ function App() {
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
               <div className="flex justify-between items-center mb-2">
                 <h3 className="text-accent" style={{ fontWeight: 600, letterSpacing: '2px', margin: 0, textTransform: 'uppercase', fontSize: '1rem' }}>
-                <h3 className="text-accent" style={{ fontWeight: 600, letterSpacing: '2px', margin: 0, textTransform: 'uppercase', fontSize: '1rem' }}>
-                  Neutron Router
-                </h3>
+                  Neutron Router <span style={{ fontSize: '0.6em', opacity: 0.6 }}>v1.0</span>
                 </h3>
                 <div className="flex" style={{ gap: '0.5rem' }}>
                   <button 
@@ -654,9 +473,7 @@ function App() {
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
               <div className="flex justify-between items-center mb-2">
                 <h3 className="text-accent" style={{ fontWeight: 600, letterSpacing: '2px', margin: 0, textTransform: 'uppercase', fontSize: '1rem' }}>
-                <h3 className="text-accent" style={{ fontWeight: 600, letterSpacing: '2px', margin: 0, textTransform: 'uppercase', fontSize: '1rem' }}>
-                  Neutron Router
-                </h3>
+                  Neutron Router <span style={{ fontSize: '0.6em', opacity: 0.6 }}>v1.0</span>
                 </h3>
               </div>
               <div className="flex gap-4 mt-2">
@@ -664,7 +481,6 @@ function App() {
                   <label style={{ fontSize: '0.9rem' }}>Source System</label>
                   <div className="flex gap-2">
                     <SystemAutocomplete value={source} onChange={setSource} placeholder="e.g. Sol" style={{ flex: 1 }} />
-                    <button onClick={() => { if(window.electronAPI) window.electronAPI.copyToClipboard(source); setStatusMessage('Copied Source!'); setTimeout(()=>setStatusMessage(''),3000); }} onMouseEnter={enableMouse} onMouseLeave={disableMouse} title="Copy Source" style={{ padding: '0.4rem', border: 'none', background: 'rgba(255,255,255,0.05)' }}>&#x274F;</button>
                     <button onClick={handleUseCurrentLocation} onMouseEnter={enableMouse} onMouseLeave={disableMouse} title="Use Current Location">&#x2316;</button>
                   </div>
                 </div>
@@ -672,7 +488,6 @@ function App() {
                   <label style={{ fontSize: '0.9rem' }}>Destination System</label>
                   <div className="flex gap-2">
                     <SystemAutocomplete value={destination} onChange={setDestination} placeholder="e.g. Colonia" style={{ flex: 1 }} />
-                    <button onClick={() => { if(window.electronAPI) window.electronAPI.copyToClipboard(destination); setStatusMessage('Copied Destination!'); setTimeout(()=>setStatusMessage(''),3000); }} onMouseEnter={enableMouse} onMouseLeave={disableMouse} title="Copy Destination" style={{ padding: '0.4rem', border: 'none', background: 'rgba(255,255,255,0.05)' }}>&#x274F;</button>
                   </div>
                 </div>
               </div>
@@ -691,7 +506,7 @@ function App() {
               </div>
               <div className="mt-4 flex justify-between items-center" style={{ marginTop: 'auto', gap: '1rem' }}>
                 <div className={statusMessage.includes('Spansh') || statusMessage.includes('failed') ? "text-warning" : "text-success"} style={{ fontSize: '0.9rem', flex: 1 }}>{statusMessage}</div>
-                <button onClick={startRoute} disabled={isCalculating} onMouseEnter={enableMouse} onMouseLeave={disableMouse} style={{ pointerEvents: 'auto', padding: '0.6rem', fontWeight: 'bold', marginTop: '1rem' }}>Calculate & Start</button>
+                <button onClick={startRoute} disabled={isCalculating} onMouseEnter={enableMouse} onMouseLeave={disableMouse} style={{ pointerEvents: 'auto' }}>Calculate & Start</button>
               </div>
             </div>
           );
@@ -719,11 +534,8 @@ function App() {
       case 'exo':
         if (!currentPlanetBio) {
           return (
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-              <h3 className="text-accent mb-2" style={{ fontWeight: 600, letterSpacing: '2px', margin: 0, textTransform: 'uppercase', fontSize: '1rem' }}>Exo Tracker</h3>
-              <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
               <div style={{ color: 'var(--text-secondary)' }}>Please land on a planet to begin surface scanning...</div>
-              </div>
             </div>
           );
         }
@@ -760,9 +572,9 @@ function App() {
         return (
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
             <h3 className="text-accent mb-2" style={{ fontWeight: 600, letterSpacing: '2px', margin: 0, textTransform: 'uppercase', fontSize: '1rem' }}>POI Search</h3>
-            <div className="flex mb-4" style={{ gap: '1.5rem', marginTop: '1rem' }}>
-              <button onClick={searchCarriers} onMouseEnter={enableMouse} onMouseLeave={disableMouse} disabled={isSearchingPoi} style={{ pointerEvents: 'auto', padding: 0, fontSize: '0.8rem', background: 'transparent', border: 'none', boxShadow: 'none', color: 'var(--accent-color)', fontWeight: 'bold' }}>{isSearchingPoi ? 'SEARCHING...' : 'NEARBY FLEET CARRIERS'}</button>
-              <button disabled style={{ padding: 0, fontSize: '0.8rem', opacity: 0.5, background: 'transparent', border: 'none', boxShadow: 'none', color: 'var(--text-secondary)', fontWeight: 'bold' }}>SCENIC VIEWS (SOON)</button>
+            <div className="flex mb-4" style={{ gap: '1rem' }}>
+              <button onClick={searchCarriers} onMouseEnter={enableMouse} onMouseLeave={disableMouse} disabled={isSearchingPoi} style={{ pointerEvents: 'auto', padding: '0.3rem 0.6rem', fontSize: '0.8rem' }}>{isSearchingPoi ? 'Searching...' : 'Nearby Fleet Carriers'}</button>
+              <button disabled style={{ padding: '0.3rem 0.6rem', fontSize: '0.8rem', opacity: 0.5 }}>Scenic Views (Soon)</button>
             </div>
             <div style={{ flex: 1, overflowY: 'auto', pointerEvents: 'auto' }} onMouseEnter={enableMouse} onMouseLeave={disableMouse}>
               {poiResults === null ? (
@@ -833,7 +645,7 @@ function App() {
     <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
       {/* Top Status float (Errors etc) */}
       {(statusMessage || isOffRoute) && (
-        <div style={{ position: 'absolute', top: '10px', left: '50%', transform: 'translateX(-50%)', background: 'rgba(15,15,15,0.9)', padding: '0.3rem 1rem', borderRadius: '4px', border: '1px solid var(--glass-border)', zIndex: 100 }}>
+        <div style={{ position: 'absolute', top: '-40px', left: '50%', transform: 'translateX(-50%)', background: 'rgba(15,15,15,0.9)', padding: '0.3rem 1rem', borderRadius: '4px', border: '1px solid var(--glass-border)', zIndex: 10 }}>
           <div className={statusMessage.includes('failed') || isOffRoute ? "text-warning" : "text-success"} style={{ fontSize: '0.9rem' }}>
             {statusMessage ? statusMessage : isOffRoute ? `Off route! Jump to ${route[currentJumpIndex]?.system} to resume.` : ''}
           </div>
@@ -844,32 +656,37 @@ function App() {
         
         {/* Sidebar */}
         {!isMinimized && (
-          <div style={{ width: '45px', borderRight: '1px solid rgba(255,255,255,0.1)', display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '0', WebkitAppRegion: 'drag' as any }}>
+          <div style={{ width: '50px', borderRight: '1px solid rgba(255,255,255,0.1)', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '1rem 0', WebkitAppRegion: 'drag' as any }}>
             <SidebarIcon active={activeTab==='route'} onClick={() => setActiveTab('route')} icon={<RouteIcon/>} title="Route Planner" enableMouse={enableMouse} disableMouse={disableMouse} />
             <SidebarIcon active={activeTab==='hvt'} onClick={() => setActiveTab('hvt')} icon={<HvtIcon/>} title="System Info (HVT)" enableMouse={enableMouse} disableMouse={disableMouse} />
             <SidebarIcon active={activeTab==='exo'} onClick={() => setActiveTab('exo')} icon={<ExoIcon/>} title="Exo Tracker" enableMouse={enableMouse} disableMouse={disableMouse} />
             <SidebarIcon active={activeTab==='poi'} onClick={() => setActiveTab('poi')} icon={<PoiIcon/>} title="POI Search" enableMouse={enableMouse} disableMouse={disableMouse} />
             <div style={{ flex: 1 }} />
-            <div style={{ fontSize: '0.6em', opacity: 0.5, marginBottom: '0.5rem', WebkitAppRegion: 'no-drag' as any }}>v1.0</div>
+            <button 
+              onClick={() => setIsMinimized(true)}
+              onMouseEnter={enableMouse}
+              onMouseLeave={disableMouse}
+              title="Minimize HUD"
+              style={{ padding: '0.2rem 0.5rem', fontSize: '0.8rem', pointerEvents: 'auto', WebkitAppRegion: 'no-drag' as any }}
+            >
+              -
+            </button>
           </div>
         )}
 
         {/* Content Area */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: isMinimized ? '0.4rem 1rem' : '0.5rem 1rem 1rem 1rem', overflow: 'hidden', position: 'relative' }}>
-          {!isMinimized && (
-            <button onClick={() => setIsMinimized(true)} onMouseEnter={enableMouse} onMouseLeave={disableMouse} title="Minimize HUD" style={{ position: 'absolute', top: '0.2rem', right: '0.5rem', padding: '0.2rem 0.6rem', fontSize: '1rem', background: 'transparent', border: 'none', color: 'var(--text-secondary)', pointerEvents: 'auto', WebkitAppRegion: 'no-drag' as any, zIndex: 100, cursor: 'pointer', boxShadow: 'none' }}>&minus;</button>
-          )}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '1rem', overflow: 'hidden' }}>
           {isMinimized ? (
-            <div className="flex justify-between items-center w-full gap-4" style={{ paddingRight: '2rem' }}>
+            <div className="flex justify-between items-center w-full gap-4">
               {renderMinimized()}
               <button 
                 onClick={() => setIsMinimized(false)}
                 onMouseEnter={enableMouse}
                 onMouseLeave={disableMouse}
                 title="Expand HUD"
-                style={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)', right: '0.5rem', padding: '0.2rem 0.6rem', fontSize: '1.2rem', background: 'transparent', border: 'none', color: 'var(--text-secondary)', pointerEvents: 'auto', WebkitAppRegion: 'no-drag' as any, zIndex: 100, cursor: 'pointer', boxShadow: 'none' }}
+                style={{ padding: '0.2rem 0.5rem', fontSize: '0.8rem', pointerEvents: 'auto', flexShrink: 0 }}
               >
-                &#43;
+                +
               </button>
             </div>
           ) : renderMaximized()}
@@ -879,3 +696,9 @@ function App() {
   );
 }
 export default App;
+"""
+
+with open(r'C:\Users\chund\.gemini\antigravity\scratch\commander-hud\src\App.tsx', 'w', encoding='utf-8') as f:
+    f.write(new_app)
+
+print("App.tsx rewritten!")

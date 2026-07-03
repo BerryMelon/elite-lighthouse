@@ -25,7 +25,7 @@ function createWindow() {
   // Center horizontally at the top
   const { width } = require('electron').screen.getPrimaryDisplay().workAreaSize;
   mainWindow.setPosition(Math.floor((width - 800) / 2), 20);
-  
+
   // Force the window to stay above fullscreen/borderless games
   mainWindow.setAlwaysOnTop(true, 'screen-saver');
 
@@ -113,9 +113,26 @@ function watchLatestJournal() {
           for (const line of lines) {
             try {
               const event = JSON.parse(line);
-              if (event.event === 'FSDJump') {
-                if (mainWindow) {
-                  mainWindow.webContents.send('fsd-jump', event);
+              
+              const relevantEvents = [
+                'FSDJump', 'Scan', 'ScanOrganic', 'Touchdown', 'LeaveBody', 
+                'SupercruiseEntry', 'FSSBodySignals', 'SAASignalsFound'
+              ];
+              
+              if (relevantEvents.includes(event.event)) {
+                BrowserWindow.getAllWindows().forEach(win => {
+                  win.webContents.send('journal-event', event);
+                  if (event.event === 'FSDJump') {
+                    win.webContents.send('fsd-jump', event);
+                  }
+                });
+                
+                if (exoWindow) {
+                  if (event.event === 'Touchdown') {
+                    exoWindow.show();
+                  } else if (['LeaveBody', 'SupercruiseEntry', 'FSDJump'].includes(event.event)) {
+                    exoWindow.hide();
+                  }
                 }
               }
             } catch(e) {}
@@ -157,5 +174,75 @@ ipcMain.handle('fetch-proxy', async (event, url, options) => {
     return { data, status: res.status };
   } catch (err) {
     return { error: err.message };
+  }
+});
+
+
+ipcMain.handle('hydrate-exo', async () => {
+  const latestFile = getLatestJournal();
+  if (!latestFile) return null;
+  try {
+    const lines = fs.readFileSync(latestFile, 'utf8').split('\n').filter(l => l.trim().length > 0);
+    
+    let isLanded = false;
+    let bioState = null;
+    let currentBody = '';
+    
+    // Process forward to reconstruct the exact state
+    for (const line of lines) {
+      try {
+        const event = JSON.parse(line);
+        
+        if (event.event === 'FSDJump' || event.event === 'SupercruiseEntry' || event.event === 'LeaveBody') {
+          isLanded = false;
+        } else if (event.event === 'Touchdown') {
+          isLanded = true;
+          currentBody = event.Body;
+        } else if (event.event === 'FSSBodySignals' || event.event === 'SAASignalsFound') {
+          const bioSignal = event.Signals && event.Signals.find(s => s.Type === 'Biological' || s.Type === '$SAA_SignalType_Biological;');
+          if (bioSignal && bioSignal.Count > 0) {
+            bioState = {
+              bodyName: event.BodyName,
+              totalSignals: bioSignal.Count,
+              scanned: {}
+            };
+          }
+        } else if (event.event === 'ScanOrganic') {
+          if (!bioState) {
+            bioState = { bodyName: 'Unknown Planet', totalSignals: 1, scanned: {} };
+          }
+          const species = event.Species_Localised || event.Species || 'Unknown';
+          const count = event.ScanType === 'Log' ? 1 : event.ScanType === 'Sample' ? 2 : 3;
+          bioState.scanned[species] = count;
+        }
+      } catch (e) {}
+    }
+    
+    if (isLanded && exoWindow) {
+      exoWindow.show();
+    }
+    
+    return { isLanded, bioState };
+  } catch(e) {
+    return null;
+  }
+});
+
+
+
+
+
+
+ipcMain.on('show-search-window', (event, data) => {
+  if (searchWindow) {
+    searchWindow.show();
+    // Send data to the search window
+    searchWindow.webContents.send('poi-results', data);
+  }
+});
+
+ipcMain.on('hide-search-window', () => {
+  if (searchWindow) {
+    searchWindow.hide();
   }
 });
