@@ -1,8 +1,9 @@
+
 # Elite Lighthouse
 
 **Elite Lighthouse** is a lightweight, frameless HUD overlay for Elite Dangerous explorers. Designed to automate and streamline the grueling process of long-range neutron star routing, Lighthouse integrates seamlessly with the Spansh API and your ship's telemetry.
 
-![Expanded Mode](screenshots/expanded.png)
+<img width="1904" height="1079" alt="overview_fullscreen_ingame" src="https://github.com/user-attachments/assets/28c6a097-ed71-4f1b-bb15-39326561ca96" />
 
 ## Features
 
@@ -11,10 +12,13 @@
 - **Auto-Copy Next System**: Sniffs your Elite Dangerous player journal in real-time. The exact second you drop into a new star system, Lighthouse ticks off your waypoint and **automatically copies the next system name to your clipboard**. Just open your galaxy map and paste!
 - **Off-Route Detection**: Jumps to the wrong star? Lighthouse instantly turns orange and warns you that you are off route, helping you correct your trajectory immediately.
 - **Deep Space EDSM Fallback**: Stuck in a completely uncharted sector? Lighthouse can triangulate your exact galactic (X, Y, Z) coordinates from your journal logs and use the EDSM API to find the nearest known star, automatically generating a rescue route from the middle of nowhere.
-- **Sleek HUD UI**: A gorgeous, glassmorphism design that sits directly over your cockpit. 
+- **Sleek HUD UI**: A gorgeous, glassmorphism design that sits directly over your cockpit.
+<img width="597" height="122" alt="in_route" src="https://github.com/user-attachments/assets/67395ddf-eb1e-4f57-a3a5-797f317e2d60" />
+
 - **Ultra-Minimal Mode**: Need to focus on the sights? Collapse the HUD into an ultra-minimal single-line readout (`Waypoint | Jumps | Next`) that takes up almost zero screen space.
 
-![Minimized Mode](screenshots/minimized.png)
+<img width="599" height="71" alt="minimized" src="https://github.com/user-attachments/assets/e0da1401-3e0e-4523-8f99-418a84a2d72d" />
+
 
 ## Installation
 
