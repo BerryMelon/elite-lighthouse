@@ -589,11 +589,43 @@ function App() {
     );
   }
 
+  if (!hudMode && isMinimized) {
+    return (
+      <div className="glass-panel" style={{ width: '100%', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', padding: '0.5rem 1rem' }}>
+        <div className="flex justify-between items-center">
+          <h3 className="text-accent" style={{ fontWeight: 600, letterSpacing: '2px', margin: 0, textTransform: 'uppercase', fontSize: '1rem' }}>
+            Lighthouse <span style={{ fontSize: '0.6em', opacity: 0.6 }}>v1.0</span>
+          </h3>
+          <button 
+            onClick={() => setIsMinimized(false)} 
+            onMouseEnter={enableMouse}
+            onMouseLeave={disableMouse}
+            title="Expand"
+            style={{ fontSize: '0.8rem', padding: '0.2rem 0.5rem', pointerEvents: 'auto' }}
+          >
+            +
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="glass-panel" style={{ width: '100%', height: '100%', boxSizing: 'border-box', display: 'flex', flexDirection: 'column' }}>
-      <h3 className="text-accent mb-2" style={{ fontWeight: 600, letterSpacing: '2px', margin: 0, textTransform: 'uppercase', fontSize: '1rem' }}>
-        Lighthouse <span style={{ fontSize: '0.6em', opacity: 0.6 }}>v1.0</span>
-      </h3>
+    <div className="glass-panel" style={{ width: '100%', height: '100%', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', padding: '0.5rem 1rem' }}>
+      <div className="flex justify-between items-center mb-2">
+        <h3 className="text-accent" style={{ fontWeight: 600, letterSpacing: '2px', margin: 0, textTransform: 'uppercase', fontSize: '1rem' }}>
+          Lighthouse <span style={{ fontSize: '0.6em', opacity: 0.6 }}>v1.0</span>
+        </h3>
+        <button 
+          onClick={() => setIsMinimized(true)} 
+          onMouseEnter={enableMouse}
+          onMouseLeave={disableMouse}
+          title="Minimize"
+          style={{ fontSize: '0.8rem', padding: '0.2rem 0.5rem', pointerEvents: 'auto' }}
+        >
+          -
+        </button>
+      </div>
       
       <div className="flex gap-4 mt-4">
         <div className="flex-col gap-2" style={{ flex: 1 }}>
