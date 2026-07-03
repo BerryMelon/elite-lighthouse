@@ -664,15 +664,15 @@ function App() {
                   <label style={{ fontSize: '0.9rem' }}>Source System</label>
                   <div className="flex gap-2">
                     <SystemAutocomplete value={source} onChange={setSource} placeholder="e.g. Sol" style={{ flex: 1 }} />
-                    <button onClick={() => { if(window.electronAPI) window.electronAPI.copyToClipboard(source); setStatusMessage('Copied Source!'); setTimeout(()=>setStatusMessage(''),3000); }} onMouseEnter={enableMouse} onMouseLeave={disableMouse} title="Copy Source" style={{ padding: '0.4rem', border: 'none', background: 'rgba(255,255,255,0.05)' }}>&#x274F;</button>
-                    <button onClick={handleUseCurrentLocation} onMouseEnter={enableMouse} onMouseLeave={disableMouse} title="Use Current Location">&#x2316;</button>
+                    <button onClick={() => { if(window.electronAPI) window.electronAPI.copyToClipboard(source); setStatusMessage('Copied Source!'); setTimeout(()=>setStatusMessage(''),3000); }} onMouseEnter={enableMouse} onMouseLeave={disableMouse} title="Copy Source" style={{ width: '2.2rem', padding: '0.4rem', border: 'none', background: 'rgba(255,255,255,0.05)' }}>&#x274F;</button>
+                    <button onClick={handleUseCurrentLocation} onMouseEnter={enableMouse} onMouseLeave={disableMouse} title="Use Current Location" style={{ width: '2.2rem', padding: '0.4rem', border: 'none', background: 'rgba(255,255,255,0.05)' }}>&#x2316;</button>
                   </div>
                 </div>
                 <div className="flex-col gap-2" style={{ flex: 1 }}>
                   <label style={{ fontSize: '0.9rem' }}>Destination System</label>
                   <div className="flex gap-2">
                     <SystemAutocomplete value={destination} onChange={setDestination} placeholder="e.g. Colonia" style={{ flex: 1 }} />
-                    <button onClick={() => { if(window.electronAPI) window.electronAPI.copyToClipboard(destination); setStatusMessage('Copied Destination!'); setTimeout(()=>setStatusMessage(''),3000); }} onMouseEnter={enableMouse} onMouseLeave={disableMouse} title="Copy Destination" style={{ padding: '0.4rem', border: 'none', background: 'rgba(255,255,255,0.05)' }}>&#x274F;</button>
+                    <button onClick={() => { if(window.electronAPI) window.electronAPI.copyToClipboard(destination); setStatusMessage('Copied Destination!'); setTimeout(()=>setStatusMessage(''),3000); }} onMouseEnter={enableMouse} onMouseLeave={disableMouse} title="Copy Destination" style={{ width: '2.2rem', padding: '0.4rem', border: 'none', background: 'rgba(255,255,255,0.05)' }}>&#x274F;</button>
                   </div>
                 </div>
               </div>
@@ -759,9 +759,9 @@ function App() {
       case 'poi':
         return (
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-            <h3 className="text-accent mb-2" style={{ fontWeight: 600, letterSpacing: '2px', margin: 0, textTransform: 'uppercase', fontSize: '1rem' }}>POI Search</h3>
+            <h3 className="text-accent mb-2" style={{ fontWeight: 600, letterSpacing: '2px', margin: 0, textTransform: 'uppercase', fontSize: '1rem' }}>Nearby POI Search</h3>
             <div className="flex mb-4" style={{ gap: '1.5rem', marginTop: '1rem' }}>
-              <button onClick={searchCarriers} onMouseEnter={enableMouse} onMouseLeave={disableMouse} disabled={isSearchingPoi} style={{ pointerEvents: 'auto', padding: 0, fontSize: '0.8rem', background: 'transparent', border: 'none', boxShadow: 'none', color: 'var(--accent-color)', fontWeight: 'bold' }}>{isSearchingPoi ? 'SEARCHING...' : 'NEARBY FLEET CARRIERS'}</button>
+              <button onClick={searchCarriers} onMouseEnter={enableMouse} onMouseLeave={disableMouse} disabled={isSearchingPoi} style={{ pointerEvents: 'auto', padding: 0, fontSize: '0.8rem', background: 'transparent', border: 'none', boxShadow: 'none', color: (poiResults !== null || isSearchingPoi) ? 'var(--accent-color)' : 'var(--text-secondary)', fontWeight: 'bold' }}>{isSearchingPoi ? 'SEARCHING...' : 'FLEET CARRIERS'}</button>
               <button disabled style={{ padding: 0, fontSize: '0.8rem', opacity: 0.5, background: 'transparent', border: 'none', boxShadow: 'none', color: 'var(--text-secondary)', fontWeight: 'bold' }}>SCENIC VIEWS (SOON)</button>
             </div>
             <div style={{ flex: 1, overflowY: 'auto', pointerEvents: 'auto' }} onMouseEnter={enableMouse} onMouseLeave={disableMouse}>
@@ -848,7 +848,7 @@ function App() {
             <SidebarIcon active={activeTab==='route'} onClick={() => setActiveTab('route')} icon={<RouteIcon/>} title="Route Planner" enableMouse={enableMouse} disableMouse={disableMouse} />
             <SidebarIcon active={activeTab==='hvt'} onClick={() => setActiveTab('hvt')} icon={<HvtIcon/>} title="System Info (HVT)" enableMouse={enableMouse} disableMouse={disableMouse} />
             <SidebarIcon active={activeTab==='exo'} onClick={() => setActiveTab('exo')} icon={<ExoIcon/>} title="Exo Tracker" enableMouse={enableMouse} disableMouse={disableMouse} />
-            <SidebarIcon active={activeTab==='poi'} onClick={() => setActiveTab('poi')} icon={<PoiIcon/>} title="POI Search" enableMouse={enableMouse} disableMouse={disableMouse} />
+            <SidebarIcon active={activeTab==='poi'} onClick={() => setActiveTab('poi')} icon={<PoiIcon/>} title="Nearby POI Search" enableMouse={enableMouse} disableMouse={disableMouse} />
             <div style={{ flex: 1 }} />
             <div style={{ fontSize: '0.6em', opacity: 0.5, marginBottom: '0.5rem', WebkitAppRegion: 'no-drag' as any }}>v1.0</div>
           </div>
