@@ -1,0 +1,112 @@
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&display=swap');
+
+:root {
+  --elite-orange: #ff7100;
+  --bg-color: rgba(10, 10, 10, 0.85);
+  --glass-border: rgba(255, 113, 0, 0.3);
+  --accent-color: #ff9d00;
+  --text-primary: #f0f0f0;
+  --text-secondary: #aaaaaa;
+  
+  --success-color: #4CAF50;
+  --warning-color: #FFC107;
+  --danger-color: #F44336;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: transparent;
+  color: var(--text-primary);
+  font-family: 'Rajdhani', sans-serif;
+  overflow: hidden; /* No scrollbars in HUD */
+  user-select: none; /* Prevent accidental text selection */
+}
+
+/* Glassmorphism panel for the UI */
+.glass-panel {
+  background: linear-gradient(135deg, rgba(15, 15, 15, 0.5) 0%, rgba(5, 5, 5, 0.55) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 113, 0, 0.2);
+  border-top: 2px solid var(--elite-orange);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(255, 113, 0, 0.05);
+  border-radius: 2px;
+  padding: 1rem;
+  color: var(--text-primary);
+  /* Window drag region */
+  -webkit-app-region: drag;
+  position: relative;
+}
+
+/* Elite Typography */
+h1, h2, h3 {
+  margin: 0;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.text-accent {
+  color: var(--accent-color);
+  text-shadow: 0 0 8px rgba(255, 136, 0, 0.5);
+}
+
+.text-success {
+  color: var(--success-color);
+  text-shadow: 0 0 8px rgba(0, 255, 170, 0.5);
+}
+
+/* Custom styling for inputs and buttons to match Elite theme */
+input, select, button {
+  /* Prevent drag on interactive elements so they can be clicked */
+  -webkit-app-region: no-drag;
+}
+
+input, select {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 157, 0, 0.3);
+  color: var(--text-primary);
+  padding: 0.5rem;
+  border-radius: 2px;
+  outline: none;
+  font-family: inherit;
+  font-size: 0.95rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus, select:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 8px rgba(255, 113, 0, 0.2);
+}
+
+button {
+  background: rgba(255, 113, 0, 0.05);
+  border: 1px solid rgba(255, 157, 0, 0.5);
+  color: var(--accent-color);
+  padding: 0.5rem 1rem;
+  border-radius: 2px;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  background: rgba(255, 113, 0, 0.1);
+  border-color: var(--accent-color);
+  box-shadow: 0 0 15px rgba(255, 113, 0, 0.3);
+  text-shadow: 0 0 5px rgba(255, 113, 0, 0.8);
+}
+
+/* Layout utilities */
+.flex { display: flex; }
+.flex-col { display: flex; flex-direction: column; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.gap-2 { gap: 0.5rem; }
+.gap-4 { gap: 1rem; }
+.mt-4 { margin-top: 1rem; }
+.mb-2 { margin-bottom: 0.5rem; }
