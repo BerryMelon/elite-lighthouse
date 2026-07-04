@@ -267,7 +267,7 @@ ipcMain.handle('hydrate-exo', async () => {
             bioState.scanned[species] = 0;
           }
           
-          if (event.ScanType === 'Sample') {
+          if (event.ScanType === 'Log' || event.ScanType === 'Sample') {
             bioState.scanned[species] += 1;
             if (bioState.scanned[species] > 2) bioState.scanned[species] = 2;
           } else if (event.ScanType === 'Analyse' || event.ScanType === 'Analyze') {
