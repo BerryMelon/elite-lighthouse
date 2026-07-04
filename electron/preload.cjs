@@ -10,6 +10,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
     ipcRenderer.removeAllListeners('poi-results');
     ipcRenderer.on('poi-results', (event, data) => callback(data));
   },
-  onFsdJump: (callback) => ipcRenderer.on('fsd-jump', (event, data) => callback(data)),
-  onJournalEvent: (callback) => ipcRenderer.on('journal-event', (event, data) => callback(data))
+  onFsdJump: (callback) => {
+    ipcRenderer.removeAllListeners('fsd-jump');
+    ipcRenderer.on('fsd-jump', (event, data) => callback(data));
+  },
+  onJournalEvent: (callback) => {
+    ipcRenderer.removeAllListeners('journal-event');
+    ipcRenderer.on('journal-event', (event, data) => callback(data));
+  }
 });
