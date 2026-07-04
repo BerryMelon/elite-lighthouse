@@ -341,11 +341,14 @@ function App() {
         const currentRoute = routeRef.current;
         const currentIndex = currentJumpIndexRef.current;
         
+        setStatusMessage(`JUMP DETECTED: ${data.StarSystem} | hud: ${hudModeRef.current} | route: ${currentRoute.length}`);
+        
         if (currentRoute.length > 0 && hudModeRef.current) {
           const nextWaypoint = currentRoute[currentIndex + 1];
           const currentWaypoint = currentRoute[currentIndex];
 
           if (nextWaypoint && data.StarSystem && data.StarSystem.toLowerCase() === nextWaypoint.system.toLowerCase()) {
+            setStatusMessage(`JUMP MATCH! Moving to waypoint ${currentIndex + 1}`);
             setActiveTab('route');
             const nextIndex = currentIndex + 1;
             setCurrentJumpIndex(nextIndex);
@@ -366,9 +369,11 @@ function App() {
               addHvtAlert(`Spansh Route Database`, hvtMessage, 'hvt');
             }
           } else if (currentWaypoint && data.StarSystem && data.StarSystem.toLowerCase() === currentWaypoint.system.toLowerCase()) {
+            setStatusMessage(`JUMP RE-ENTRY! Staying at waypoint ${currentIndex}`);
             setActiveTab('route');
             setIsOffRoute(false);
           } else {
+            setStatusMessage(`OFF ROUTE: Jumped to ${data.StarSystem}`);
             setIsOffRoute(true);
             setActiveTab('route');
           }
