@@ -204,6 +204,36 @@ function App() {
         if (parsed.range) setRange(parsed.range);
         if (parsed.superchargeType) setSuperchargeType(parsed.superchargeType);
         setHudMode(true);
+
+        if (window.electronAPI) {
+          window.electronAPI.getCurrentLocation().then((loc: any) => {
+            if (loc && loc.system) {
+              const sys = loc.system.toLowerCase();
+              let newIdx = parsed.currentJumpIndex;
+              for (let i = parsed.currentJumpIndex; i < parsed.route.length; i++) {
+                if (parsed.route[i].system.toLowerCase() === sys) {
+                  newIdx = i;
+                }
+              }
+              
+              if (newIdx !== parsed.currentJumpIndex) {
+                setCurrentJumpIndex(newIdx);
+                const nextWaypoint = parsed.route[newIdx + 1];
+                if (nextWaypoint) {
+                  window.electronAPI.copyToClipboard(nextWaypoint.system);
+                  setStatusMessage(`Resumed route at ${loc.system}. Copied ${nextWaypoint.system} to clipboard!`);
+                } else {
+                  setStatusMessage(`Resumed route: Arrived at final destination ${loc.system}!`);
+                }
+                parsed.currentJumpIndex = newIdx;
+                localStorage.setItem('savedRoute', JSON.stringify(parsed));
+                setIsOffRoute(false);
+              } else if (parsed.route[parsed.currentJumpIndex] && parsed.route[parsed.currentJumpIndex].system.toLowerCase() !== sys) {
+                setIsOffRoute(true);
+              }
+            }
+          });
+        }
       } catch (e) {
         localStorage.removeItem('savedRoute');
       }
@@ -376,6 +406,12 @@ function App() {
             } else if (currentWaypoint && data.StarSystem && data.StarSystem.toLowerCase() === currentWaypoint.system.toLowerCase()) {
               setActiveTab('route');
               setIsOffRoute(false);
+              
+              const newNext = currentRoute[currentIndex + 1];
+              if (newNext) {
+                window.electronAPI.copyToClipboard(newNext.system);
+                setStatusMessage(`Re-entered route at ${data.StarSystem}. Copied ${newNext.system} to clipboard!`);
+              }
             } else {
               setIsOffRoute(true);
               setActiveTab('route');
