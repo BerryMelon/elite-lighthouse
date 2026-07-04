@@ -67,6 +67,14 @@ function getLatestJournal() {
   return path.join(journalDir, files[files.length - 1]);
 }
 
+function getRecentJournals(count=5) {
+  if (!fs.existsSync(journalDir)) return [];
+  const files = fs.readdirSync(journalDir).filter(f => f.startsWith('Journal.') && f.endsWith('.01.log'));
+  if (files.length === 0) return [];
+  files.sort();
+  return files.slice(-count).map(f => path.join(journalDir, f));
+}
+
 ipcMain.handle('get-current-location', async () => {
   const latestFile = getLatestJournal();
   if (!latestFile) return { error: 'Journal directory or files not found' };
@@ -126,14 +134,6 @@ function watchLatestJournal() {
                     win.webContents.send('fsd-jump', event);
                   }
                 });
-                
-                if (exoWindow) {
-                  if (event.event === 'Touchdown') {
-                    exoWindow.show();
-                  } else if (['LeaveBody', 'SupercruiseEntry', 'FSDJump'].includes(event.event)) {
-                    exoWindow.hide();
-                  }
-                }
               }
             } catch(e) {}
           }
@@ -179,17 +179,17 @@ ipcMain.handle('fetch-proxy', async (event, url, options) => {
 
 
 ipcMain.handle('hydrate-exo', async () => {
-  const latestFile = getLatestJournal();
-  if (!latestFile) return null;
+  const recentFiles = getRecentJournals(5);
+  if (recentFiles.length === 0) return null;
   try {
-    const lines = fs.readFileSync(latestFile, 'utf8').split('\n').filter(l => l.trim().length > 0);
-    
     let isLanded = false;
     let bioState = null;
     let currentBody = '';
     
-    // Process forward to reconstruct the exact state
-    for (const line of lines) {
+    // Process forward across up to 5 latest files to reconstruct the exact state
+    for (const file of recentFiles) {
+      const lines = fs.readFileSync(file, 'utf8').split('\n').filter(l => l.trim().length > 0);
+      for (const line of lines) {
       try {
         const event = JSON.parse(line);
         
@@ -201,11 +201,15 @@ ipcMain.handle('hydrate-exo', async () => {
         } else if (event.event === 'FSSBodySignals' || event.event === 'SAASignalsFound') {
           const bioSignal = event.Signals && event.Signals.find(s => s.Type === 'Biological' || s.Type === '$SAA_SignalType_Biological;');
           if (bioSignal && bioSignal.Count > 0) {
-            bioState = {
-              bodyName: event.BodyName,
-              totalSignals: bioSignal.Count,
-              scanned: {}
-            };
+            if (bioState && bioState.bodyName === event.BodyName) {
+              bioState.totalSignals = bioSignal.Count;
+            } else {
+              bioState = {
+                bodyName: event.BodyName,
+                totalSignals: bioSignal.Count,
+                scanned: {}
+              };
+            }
           }
         } else if (event.event === 'ScanOrganic') {
           if (!bioState) {
@@ -214,15 +218,16 @@ ipcMain.handle('hydrate-exo', async () => {
           const species = event.Species_Localised || event.Species || 'Unknown';
           const count = event.ScanType === 'Log' ? 1 : event.ScanType === 'Sample' ? 2 : 3;
           bioState.scanned[species] = count;
+        } else if (event.event === 'Location') {
+          if (event.Latitude !== undefined && event.Longitude !== undefined && !event.Docked) {
+            isLanded = true;
+          }
         }
       } catch (e) {}
     }
+  }
     
-    if (isLanded && exoWindow) {
-      exoWindow.show();
-    }
-    
-    return { isLanded, bioState };
+  return { isLanded, bioState };
   } catch(e) {
     return null;
   }
@@ -231,18 +236,4 @@ ipcMain.handle('hydrate-exo', async () => {
 
 
 
-
-
-ipcMain.on('show-search-window', (event, data) => {
-  if (searchWindow) {
-    searchWindow.show();
-    // Send data to the search window
-    searchWindow.webContents.send('poi-results', data);
-  }
-});
-
-ipcMain.on('hide-search-window', () => {
-  if (searchWindow) {
-    searchWindow.hide();
-  }
-});
+

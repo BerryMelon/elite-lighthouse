@@ -169,8 +169,16 @@ function App() {
   const [currentJumpIndex, setCurrentJumpIndex] = useState(0);
   const [source, setSource] = useState('');
   const [destination, setDestination] = useState('');
-  const [range, setRange] = useState('50');
-  const [superchargeType, setSuperchargeType] = useState('normal'); // 'normal' or 'overcharge'
+  const [range, setRange] = useState(() => localStorage.getItem('userRange') || '50');
+  const [superchargeType, setSuperchargeType] = useState(() => localStorage.getItem('userSuperchargeType') || 'normal'); // 'normal' or 'overcharge'
+  
+  useEffect(() => {
+    localStorage.setItem('userRange', range);
+  }, [range]);
+
+  useEffect(() => {
+    localStorage.setItem('userSuperchargeType', superchargeType);
+  }, [superchargeType]);
   const [hudMode, setHudMode] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   
@@ -193,7 +201,8 @@ function App() {
         setCurrentJumpIndex(parsed.currentJumpIndex);
         setSource(parsed.source);
         setDestination(parsed.destination);
-        setRange(parsed.range);
+        if (parsed.range) setRange(parsed.range);
+        if (parsed.superchargeType) setSuperchargeType(parsed.superchargeType);
         setHudMode(true);
       } catch (e) {
         localStorage.removeItem('savedRoute');
@@ -341,7 +350,8 @@ function App() {
               currentJumpIndex: nextIndex,
               source,
               destination,
-              range
+              range,
+              superchargeType
             }));
             
             // Check for HVT in arrival system
@@ -382,6 +392,9 @@ function App() {
       window.electronAPI.hydrateExo().then((res: any) => {
         if (res && res.bioState) {
           setCurrentPlanetBio(res.bioState);
+          if (res.isLanded) {
+            setActiveTab('exo');
+          }
         }
       });
     }
@@ -472,7 +485,9 @@ function App() {
           route: newRoute,
           currentJumpIndex: 0,
           source: newRoute[0]?.system || source,
-          destination: destination
+          destination: destination,
+          range: range,
+          superchargeType: superchargeType
         }));
         
         if (newRoute.length > 1 && window.electronAPI) {
@@ -588,9 +603,7 @@ function App() {
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
               <div className="flex justify-between items-center mb-2">
                 <h3 className="text-accent" style={{ fontWeight: 600, letterSpacing: '2px', margin: 0, textTransform: 'uppercase', fontSize: '1rem' }}>
-                <h3 className="text-accent" style={{ fontWeight: 600, letterSpacing: '2px', margin: 0, textTransform: 'uppercase', fontSize: '1rem' }}>
                   Neutron Router
-                </h3>
                 </h3>
                 <div className="flex" style={{ gap: '0.5rem' }}>
                   <button 
@@ -661,9 +674,7 @@ function App() {
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
               <div className="flex justify-between items-center mb-2">
                 <h3 className="text-accent" style={{ fontWeight: 600, letterSpacing: '2px', margin: 0, textTransform: 'uppercase', fontSize: '1rem' }}>
-                <h3 className="text-accent" style={{ fontWeight: 600, letterSpacing: '2px', margin: 0, textTransform: 'uppercase', fontSize: '1rem' }}>
                   Neutron Router
-                </h3>
                 </h3>
               </div>
               <div className="flex gap-4 mt-2">
