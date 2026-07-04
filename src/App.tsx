@@ -638,7 +638,7 @@ function App() {
           const current = route[currentJumpIndex];
           const next = route[currentJumpIndex + 1];
           return (
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', pointerEvents: 'auto' }} onMouseEnter={enableMouse} onMouseLeave={disableMouse}>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', pointerEvents: 'auto' }} onMouseEnter={enableMouse} onMouseLeave={disableMouse}>
               <div className="flex justify-between items-center mb-2">
                 <h3 className="text-accent" style={{ fontWeight: 600, letterSpacing: '2px', margin: 0, textTransform: 'uppercase', fontSize: '1rem' }}>
                   Neutron Router
@@ -652,7 +652,8 @@ function App() {
                   </button>
                 </div>
               </div>
-              <div className="flex justify-between items-center">
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <div className="flex justify-between items-center">
                 <div>
                   <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Route Waypoint</div>
                   <div className="flex items-center" style={{ gap: '0.5rem' }}>
@@ -703,9 +704,10 @@ function App() {
                 </div>
               </div>
               
-              <div className="flex justify-between items-center mt-4">
-                <div className="text-warning" style={{ fontSize: '0.9rem' }}>
-                  {isOffRoute ? `Off route! Jump to ${current.system} to resume.` : ''}
+                <div className="flex justify-between items-center mt-4">
+                  <div className="text-warning" style={{ fontSize: '0.9rem' }}>
+                    {isOffRoute ? `Off route! Jump to ${current.system} to resume.` : ''}
+                  </div>
                 </div>
               </div>
             </div>
