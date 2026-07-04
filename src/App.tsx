@@ -371,8 +371,8 @@ function App() {
       window.electronAPI.onJournalEvent((data: any) => {
         if (data.event === 'SupercruiseEntry' || data.event === 'LeaveBody') {
           setCurrentPlanetBio(null);
-        } else if (data.event === 'SAAScanComplete' || data.event === 'Touchdown') {
-          // Re-hydrate exo on touchdown or surface scan
+        } else if (['SAAScanComplete', 'Touchdown', 'ScanOrganic', 'FSSBodySignals', 'SAASignalsFound'].includes(data.event)) {
+          // Re-hydrate exo on touchdown, surface scan, or bio scan
           window.electronAPI.hydrateExo().then((res: any) => {
             if (res && res.bioState) {
               setCurrentPlanetBio(res.bioState);
