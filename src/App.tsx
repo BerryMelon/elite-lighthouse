@@ -690,6 +690,8 @@ function App() {
                          </div>
                        </div>
                      </div>
+                  ) : (
+                     <div className="text-success" style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>ARRIVED</div>
                   )}
                 </div>
               </div>
