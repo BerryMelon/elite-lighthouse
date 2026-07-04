@@ -341,14 +341,11 @@ function App() {
           const currentRoute = routeRef.current;
           const currentIndex = currentJumpIndexRef.current;
           
-          setStatusMessage(`JUMP DETECTED: ${data.StarSystem} | hud: ${hudModeRef.current} | route: ${currentRoute.length}`);
-          
           if (currentRoute.length > 0 && hudModeRef.current) {
             const nextWaypoint = currentRoute[currentIndex + 1];
             const currentWaypoint = currentRoute[currentIndex];
 
             if (nextWaypoint && data.StarSystem && data.StarSystem.toLowerCase() === nextWaypoint.system.toLowerCase()) {
-              setStatusMessage(`JUMP MATCH! Moving to waypoint ${currentIndex + 1}`);
               setActiveTab('route');
               const nextIndex = currentIndex + 1;
               setCurrentJumpIndex(nextIndex);
@@ -363,17 +360,24 @@ function App() {
                 superchargeType
               }));
               
+              const newNext = currentRoute[nextIndex + 1];
+              if (newNext) {
+                window.electronAPI.copyToClipboard(newNext.system);
+                setStatusMessage(`Arrived at ${data.StarSystem}. Copied ${newNext.system} to clipboard!`);
+              } else {
+                setStatusMessage(`Arrived at final destination: ${data.StarSystem}!`);
+              }
+              setTimeout(() => setStatusMessage(''), 8000);
+              
               // Check for HVT in arrival system
               if (nextWaypoint.hvt && nextWaypoint.hvt.length > 0) {
                 const hvtMessage = nextWaypoint.hvt.map((h: any) => h.name).join(', ');
                 addHvtAlert(`Spansh Route Database`, hvtMessage, 'hvt');
               }
             } else if (currentWaypoint && data.StarSystem && data.StarSystem.toLowerCase() === currentWaypoint.system.toLowerCase()) {
-              setStatusMessage(`JUMP RE-ENTRY! Staying at waypoint ${currentIndex}`);
               setActiveTab('route');
               setIsOffRoute(false);
             } else {
-              setStatusMessage(`OFF ROUTE: Jumped to ${data.StarSystem}`);
               setIsOffRoute(true);
               setActiveTab('route');
             }
