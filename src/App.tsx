@@ -345,7 +345,7 @@ function App() {
           const nextWaypoint = currentRoute[currentIndex + 1];
           const currentWaypoint = currentRoute[currentIndex];
 
-          if (nextWaypoint && data.system.toLowerCase() === nextWaypoint.system.toLowerCase()) {
+          if (nextWaypoint && data.StarSystem && data.StarSystem.toLowerCase() === nextWaypoint.system.toLowerCase()) {
             setActiveTab('route');
             const nextIndex = currentIndex + 1;
             setCurrentJumpIndex(nextIndex);
@@ -365,11 +365,12 @@ function App() {
               const hvtMessage = nextWaypoint.hvt.map((h: any) => h.name).join(', ');
               addHvtAlert(`Spansh Route Database`, hvtMessage, 'hvt');
             }
-          } else if (currentWaypoint && data.system.toLowerCase() === currentWaypoint.system.toLowerCase()) {
+          } else if (currentWaypoint && data.StarSystem && data.StarSystem.toLowerCase() === currentWaypoint.system.toLowerCase()) {
             setActiveTab('route');
             setIsOffRoute(false);
           } else {
             setIsOffRoute(true);
+            setActiveTab('route');
           }
         }
       });
