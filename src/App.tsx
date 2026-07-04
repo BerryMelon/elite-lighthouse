@@ -221,10 +221,15 @@ function App() {
                 const nextWaypoint = parsed.route[newIdx + 1];
                 if (nextWaypoint) {
                   window.electronAPI.copyToClipboard(nextWaypoint.system);
-                  setStatusMessage(`Resumed route at ${loc.system}. Copied ${nextWaypoint.system} to clipboard!`);
+                  const msg = `Resumed route at ${loc.system}. Copied ${nextWaypoint.system} to clipboard!`;
+                  setRouteStatus(msg);
+                  setStatusMessage(msg);
                 } else {
-                  setStatusMessage(`Resumed route: Arrived at final destination ${loc.system}!`);
+                  const msg = `Resumed route: Arrived at final destination ${loc.system}!`;
+                  setRouteStatus(msg);
+                  setStatusMessage(msg);
                 }
+                setTimeout(() => setStatusMessage(''), 8000);
                 parsed.currentJumpIndex = newIdx;
                 localStorage.setItem('savedRoute', JSON.stringify(parsed));
                 setIsOffRoute(false);
@@ -241,6 +246,7 @@ function App() {
   }, []);
 
   const [statusMessage, setStatusMessage] = useState('');
+  const [routeStatus, setRouteStatus] = useState('');
   const [isSearchingPoi, setIsSearchingPoi] = useState(false);
   const [poiResults, setPoiResults] = useState<{name: string, system_name: string, distance: number}[] | null>(null);
 
@@ -393,10 +399,15 @@ function App() {
               const newNext = currentRoute[nextIndex + 1];
               if (newNext) {
                 window.electronAPI.copyToClipboard(newNext.system);
-                setStatusMessage(`Arrived at ${data.StarSystem}. Copied ${newNext.system} to clipboard!`);
+                const msg = `Arrived at ${data.StarSystem}. Copied ${newNext.system} to clipboard!`;
+                setRouteStatus(msg);
+                setStatusMessage(msg);
               } else {
-                setStatusMessage(`Arrived at final destination: ${data.StarSystem}!`);
+                const msg = `Arrived at final destination: ${data.StarSystem}!`;
+                setRouteStatus(msg);
+                setStatusMessage(msg);
               }
+              setTimeout(() => setStatusMessage(''), 8000);
               
               // Check for HVT in arrival system
               if (nextWaypoint.hvt && nextWaypoint.hvt.length > 0) {
@@ -410,7 +421,10 @@ function App() {
               const newNext = currentRoute[currentIndex + 1];
               if (newNext) {
                 window.electronAPI.copyToClipboard(newNext.system);
-                setStatusMessage(`Re-entered route at ${data.StarSystem}. Copied ${newNext.system} to clipboard!`);
+                const msg = `Re-entered route at ${data.StarSystem}. Copied ${newNext.system} to clipboard!`;
+                setRouteStatus(msg);
+                setStatusMessage(msg);
+                setTimeout(() => setStatusMessage(''), 8000);
               }
             } else {
               setIsOffRoute(true);
@@ -742,7 +756,7 @@ function App() {
               
               <div style={{ marginTop: 'auto', paddingTop: '0.5rem' }}>
                 <div style={{ fontSize: '0.85rem' }} className={isOffRoute ? 'text-warning' : (statusMessage.includes('failed') || statusMessage.includes('Err') ? 'text-warning' : 'text-success')}>
-                  {isOffRoute ? `Off route! Jump to ${current.system} to resume.` : (statusMessage || 'On route - ready for next jump')}
+                  {isOffRoute ? `Off route! Jump to ${current.system} to resume.` : (statusMessage || routeStatus || 'On route - ready for next jump')}
                 </div>
               </div>
             </div>
