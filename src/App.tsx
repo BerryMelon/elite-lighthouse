@@ -248,7 +248,7 @@ function App() {
   const [statusMessage, setStatusMessage] = useState('');
   const [routeStatus, setRouteStatus] = useState('');
   const [isSearchingPoi, setIsSearchingPoi] = useState(false);
-  const [poiResults, setPoiResults] = useState<{name: string, system_name: string, distance: number}[] | null>(null);
+  const [poiResults, setPoiResults] = useState<{name: string, system_name: string, distance: number, services?: string[]}[] | null>(null);
 
   const searchCarriers = async () => {
     setIsSearchingPoi(true);
@@ -322,7 +322,8 @@ function App() {
         const results = data.results.slice(0, 15).map((r: any) => ({
           name: r.name,
           system_name: r.system_name,
-          distance: r.distance
+          distance: r.distance,
+          services: r.services ? r.services.map((s: any) => s.name) : []
         }));
         setPoiResults(results);
       } else {
@@ -887,22 +888,36 @@ function App() {
               ) : (
                 <div className="flex-col" style={{ gap: '0.2rem' }}>
                   {poiResults.map((r, i) => (
-                    <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.3rem 0', borderBottom: '1px solid rgba(255,255,255,0.1)', fontSize: '0.85rem', alignItems: 'center' }}>
-                      <div style={{ display: 'flex', gap: '1rem', flex: 1, alignItems: 'center' }}>
-                        <div className="text-accent" style={{ fontWeight: 'bold', flex: 1 }}>{r.name}</div>
-                        <div style={{ color: 'var(--text-secondary)', flex: 1 }}>{r.system_name}</div>
-                        <div style={{ width: '60px', textAlign: 'right' }}>{r.distance.toFixed(1)} Ly</div>
+                    <div key={i} style={{ display: 'flex', flexDirection: 'column', padding: '0.5rem 0', borderBottom: '1px solid rgba(255,255,255,0.1)', fontSize: '0.85rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div style={{ display: 'flex', gap: '1rem', flex: 1, alignItems: 'center' }}>
+                          <div className="text-accent" style={{ fontWeight: 'bold' }}>{r.name}</div>
+                          <div style={{ color: 'var(--text-secondary)' }}>{r.system_name}</div>
+                          <div style={{ marginLeft: 'auto', marginRight: '1rem' }}>{r.distance.toFixed(1)} Ly</div>
+                        </div>
+                        <button 
+                          onClick={() => {
+                            if (window.electronAPI) window.electronAPI.copyToClipboard(r.system_name);
+                            setStatusMessage(`Copied ${r.system_name}`);
+                            setTimeout(() => setStatusMessage(''), 3000);
+                          }}
+                          style={{ fontSize: '0.7rem', padding: '0.1rem 0.3rem' }}
+                        >
+                          Copy
+                        </button>
                       </div>
-                      <button 
-                        onClick={() => {
-                          if (window.electronAPI) window.electronAPI.copyToClipboard(r.system_name);
-                          setStatusMessage(`Copied ${r.system_name}`);
-                          setTimeout(() => setStatusMessage(''), 3000);
-                        }}
-                        style={{ fontSize: '0.7rem', padding: '0.1rem 0.3rem', marginLeft: '1rem' }}
-                      >
-                        Copy
-                      </button>
+                      {r.services && r.services.length > 0 && (
+                        <div style={{ marginTop: '0.4rem', display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                          {r.services
+                            .filter(s => ['Black Market', 'Market', 'Universal Cartographics', 'Outfitting', 'Restock', 'Refuel', 'Repair', 'Shipyard', 'Redemption Office', 'Bartender', 'Vista Genomics', 'Pioneer Supplies'].includes(s))
+                            .map(s => (
+                              <span key={s} style={{ background: 'rgba(255,170,0,0.1)', color: 'var(--accent-color)', padding: '0.1rem 0.4rem', borderRadius: '3px', fontSize: '0.7rem' }}>
+                                {s}
+                              </span>
+                            ))
+                          }
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
