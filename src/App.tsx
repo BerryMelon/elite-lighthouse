@@ -334,54 +334,51 @@ function App() {
 
   useEffect(() => {
     if (window.electronAPI) {
-      window.electronAPI.onFsdJump((data: any) => {
-        setHvtAlerts([]); // Clear HVTs from previous system
-        
-        // Handle FSD Jump logic (same as before)
-        const currentRoute = routeRef.current;
-        const currentIndex = currentJumpIndexRef.current;
-        
-        setStatusMessage(`JUMP DETECTED: ${data.StarSystem} | hud: ${hudModeRef.current} | route: ${currentRoute.length}`);
-        
-        if (currentRoute.length > 0 && hudModeRef.current) {
-          const nextWaypoint = currentRoute[currentIndex + 1];
-          const currentWaypoint = currentRoute[currentIndex];
-
-          if (nextWaypoint && data.StarSystem && data.StarSystem.toLowerCase() === nextWaypoint.system.toLowerCase()) {
-            setStatusMessage(`JUMP MATCH! Moving to waypoint ${currentIndex + 1}`);
-            setActiveTab('route');
-            const nextIndex = currentIndex + 1;
-            setCurrentJumpIndex(nextIndex);
-            setIsOffRoute(false);
-            
-            localStorage.setItem('savedRoute', JSON.stringify({
-              route: currentRoute,
-              currentJumpIndex: nextIndex,
-              source,
-              destination,
-              range,
-              superchargeType
-            }));
-            
-            // Check for HVT in arrival system
-            if (nextWaypoint.hvt && nextWaypoint.hvt.length > 0) {
-              const hvtMessage = nextWaypoint.hvt.map((h: any) => h.name).join(', ');
-              addHvtAlert(`Spansh Route Database`, hvtMessage, 'hvt');
-            }
-          } else if (currentWaypoint && data.StarSystem && data.StarSystem.toLowerCase() === currentWaypoint.system.toLowerCase()) {
-            setStatusMessage(`JUMP RE-ENTRY! Staying at waypoint ${currentIndex}`);
-            setActiveTab('route');
-            setIsOffRoute(false);
-          } else {
-            setStatusMessage(`OFF ROUTE: Jumped to ${data.StarSystem}`);
-            setIsOffRoute(true);
-            setActiveTab('route');
-          }
-        }
-      });
-      
       window.electronAPI.onJournalEvent((data: any) => {
-        if (data.event === 'SupercruiseEntry' || data.event === 'LeaveBody') {
+        if (data.event === 'FSDJump') {
+          setHvtAlerts([]); // Clear HVTs from previous system
+          
+          const currentRoute = routeRef.current;
+          const currentIndex = currentJumpIndexRef.current;
+          
+          setStatusMessage(`JUMP DETECTED: ${data.StarSystem} | hud: ${hudModeRef.current} | route: ${currentRoute.length}`);
+          
+          if (currentRoute.length > 0 && hudModeRef.current) {
+            const nextWaypoint = currentRoute[currentIndex + 1];
+            const currentWaypoint = currentRoute[currentIndex];
+
+            if (nextWaypoint && data.StarSystem && data.StarSystem.toLowerCase() === nextWaypoint.system.toLowerCase()) {
+              setStatusMessage(`JUMP MATCH! Moving to waypoint ${currentIndex + 1}`);
+              setActiveTab('route');
+              const nextIndex = currentIndex + 1;
+              setCurrentJumpIndex(nextIndex);
+              setIsOffRoute(false);
+              
+              localStorage.setItem('savedRoute', JSON.stringify({
+                route: currentRoute,
+                currentJumpIndex: nextIndex,
+                source,
+                destination,
+                range,
+                superchargeType
+              }));
+              
+              // Check for HVT in arrival system
+              if (nextWaypoint.hvt && nextWaypoint.hvt.length > 0) {
+                const hvtMessage = nextWaypoint.hvt.map((h: any) => h.name).join(', ');
+                addHvtAlert(`Spansh Route Database`, hvtMessage, 'hvt');
+              }
+            } else if (currentWaypoint && data.StarSystem && data.StarSystem.toLowerCase() === currentWaypoint.system.toLowerCase()) {
+              setStatusMessage(`JUMP RE-ENTRY! Staying at waypoint ${currentIndex}`);
+              setActiveTab('route');
+              setIsOffRoute(false);
+            } else {
+              setStatusMessage(`OFF ROUTE: Jumped to ${data.StarSystem}`);
+              setIsOffRoute(true);
+              setActiveTab('route');
+            }
+          }
+        } else if (data.event === 'SupercruiseEntry' || data.event === 'LeaveBody') {
           setCurrentPlanetBio(null);
         } else if (['SAAScanComplete', 'Touchdown', 'ScanOrganic', 'FSSBodySignals', 'SAASignalsFound'].includes(data.event)) {
           // Re-hydrate exo on touchdown, surface scan, or bio scan
