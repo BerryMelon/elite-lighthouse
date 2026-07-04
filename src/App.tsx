@@ -412,7 +412,7 @@ function App() {
     }
   }, []);
 
-  const calculateRoute = async (source: string, destination: string, range: string, superchargeType: string) => {
+  const calculateRoute = async (source: string, destination: string, range: string, superchargeType: string, isFallback = false) => {
     if (!source || !destination || !range) {
       setStatusMessage('Please fill all fields');
       return;
@@ -449,6 +449,26 @@ function App() {
       }
 
       if (data.error) {
+        if (!isFallback && (data.error.toLowerCase() === 'not found' || data.error.toLowerCase().includes('not found'))) {
+          if (window.electronAPI) {
+            const actualLoc = await window.electronAPI.getCurrentLocation();
+            if (actualLoc && actualLoc.system.toLowerCase() === source.toLowerCase() && actualLoc.pos) {
+              setStatusMessage(`System undiscovered. Finding nearest known...`);
+              const [x, y, z] = actualLoc.pos;
+              const edsmRes = await window.electronAPI.fetchProxy(`https://www.edsm.net/api-v1/sphere-systems?x=${x}&y=${y}&z=${z}&radius=50`);
+              if (edsmRes.data && edsmRes.data.length > 0) {
+                const sorted = edsmRes.data.sort((a: any, b: any) => a.distance - b.distance);
+                const nearest = sorted.find((s: any) => s.name.toLowerCase() !== source.toLowerCase());
+                if (nearest) {
+                  setStatusMessage(`Routing from nearest known: ${nearest.name}`);
+                  setSource(nearest.name);
+                  return calculateRoute(nearest.name, destination, range, superchargeType, true);
+                }
+              }
+            }
+          }
+        }
+        
         setStatusMessage(data.error);
         setIsCalculating(false);
         return;
