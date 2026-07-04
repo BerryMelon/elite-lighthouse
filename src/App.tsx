@@ -331,6 +331,7 @@ function App() {
           const currentWaypoint = currentRoute[currentIndex];
 
           if (nextWaypoint && data.system.toLowerCase() === nextWaypoint.system.toLowerCase()) {
+            setActiveTab('route');
             const nextIndex = currentIndex + 1;
             setCurrentJumpIndex(nextIndex);
             setIsOffRoute(false);
@@ -349,6 +350,7 @@ function App() {
               addHvtAlert(`High Value Targets detected:`, hvtMessage, 'hvt');
             }
           } else if (currentWaypoint && data.system.toLowerCase() === currentWaypoint.system.toLowerCase()) {
+            setActiveTab('route');
             setIsOffRoute(false);
           } else {
             setIsOffRoute(true);
@@ -362,7 +364,12 @@ function App() {
         } else if (data.event === 'SAAScanComplete' || data.event === 'Touchdown') {
           // Re-hydrate exo on touchdown or surface scan
           window.electronAPI.hydrateExo().then((res: any) => {
-            if (res && res.bioState) setCurrentPlanetBio(res.bioState);
+            if (res && res.bioState) {
+              setCurrentPlanetBio(res.bioState);
+              if (data.event === 'Touchdown' && res.bioState.totalSignals > 0) {
+                setActiveTab('exo');
+              }
+            }
           });
         }
       });
