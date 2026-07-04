@@ -363,7 +363,7 @@ function App() {
             // Check for HVT in arrival system
             if (nextWaypoint.hvt && nextWaypoint.hvt.length > 0) {
               const hvtMessage = nextWaypoint.hvt.map((h: any) => h.name).join(', ');
-              addHvtAlert(`High Value Targets detected:`, hvtMessage, 'hvt');
+              addHvtAlert(`Spansh Route Database`, hvtMessage, 'hvt');
             }
           } else if (currentWaypoint && data.system.toLowerCase() === currentWaypoint.system.toLowerCase()) {
             setActiveTab('route');
@@ -392,7 +392,7 @@ function App() {
 
       if (window.electronAPI.onRealtimeHvt) {
         window.electronAPI.onRealtimeHvt((data: any) => {
-          addHvtAlert(`Live FSS Scan:`, `${data.message} on ${data.bodyName}`, 'hvt');
+          addHvtAlert(data.message, data.bodyName, 'hvt');
         });
       }
     }
@@ -729,16 +729,20 @@ function App() {
       case 'hvt':
         return (
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-            <h3 className="text-accent mb-4" style={{ fontWeight: 600, letterSpacing: '2px', margin: 0, textTransform: 'uppercase', fontSize: '1rem' }}>High Value Targets</h3>
+            <div className="flex justify-between items-center" style={{ marginBottom: '1rem' }}>
+              <h3 className="text-accent" style={{ fontWeight: 600, letterSpacing: '2px', margin: 0, textTransform: 'uppercase', fontSize: '1rem' }}>High Value Targets</h3>
+            </div>
             <div style={{ flex: 1, overflowY: 'auto', pointerEvents: 'auto' }} onMouseEnter={enableMouse} onMouseLeave={disableMouse}>
               {hvtAlerts.length === 0 ? (
                 <div style={{ color: 'var(--text-secondary)', textAlign: 'center', marginTop: '2rem' }}>No high value targets found nearby.</div>
               ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <div className="flex-col" style={{ gap: '0.2rem' }}>
                   {hvtAlerts.map(alert => (
-                    <div key={alert.id} style={{ padding: '0.8rem', background: 'rgba(15, 15, 15, 0.6)', borderLeft: `3px solid ${alert.type === 'bio' ? 'var(--success-color)' : 'var(--accent-color)'}` }}>
-                      <div style={{ fontWeight: 'bold' }}>{alert.message}</div>
-                      {alert.submessage && <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{alert.submessage}</div>}
+                    <div key={alert.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.3rem 0', borderBottom: '1px solid rgba(255,255,255,0.1)', fontSize: '0.85rem', alignItems: 'center' }}>
+                      <div style={{ display: 'flex', gap: '1rem', flex: 1, alignItems: 'center' }}>
+                        <div className={alert.type === 'bio' ? "text-success" : "text-accent"} style={{ fontWeight: 'bold', flex: 1 }}>{alert.message}</div>
+                        <div style={{ color: 'var(--text-secondary)', flex: 1 }}>{alert.submessage}</div>
+                      </div>
                     </div>
                   ))}
                 </div>
