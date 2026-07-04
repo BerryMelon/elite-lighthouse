@@ -1,52 +1,63 @@
+# Elite: Lighthouse (v2.0)
 
-# Elite Lighthouse
+Lighthouse is a sleek, minimalist, and immersive overlay HUD for Elite Dangerous. 
 
-**Elite Lighthouse** is a lightweight, frameless HUD overlay for Elite Dangerous explorers. Designed to automate and streamline the grueling process of long-range neutron star routing, Lighthouse integrates seamlessly with the Spansh API and your ship's telemetry.
+While tools like Exploration Buddy are fantastic and popular for providing comprehensive, full-blown toolkits with every piece of data imaginable, **Lighthouse is built with a different philosophy**. We wanted a HUD that feels like a natural extension of your ship's dashboard. It doesn't overwhelm you with spreadsheets of data; it gives you exactly what you need, right when you need it, and completely gets out of your way.
 
-<img width="1904" height="1079" alt="overview_fullscreen_ingame" src="https://github.com/user-attachments/assets/28c6a097-ed71-4f1b-bb15-39326561ca96" />
+Designed with a premium glassmorphic aesthetic, it sits seamlessly over your game without breaking immersion.
+
+[Screenshot of Lighthouse overlay here]
 
 ## Features
 
-- **Spansh API Integration**: Automatically calculates long-range neutron highways to your destination, perfectly optimized for your ship's jump range.
-- **Supercruise Overcharge (SCO) Support**: Fully supports the new SCO FSDs (`supercharge_multiplier = 6x`), ensuring you squeeze every lightyear out of those massive overcharged jumps.
-- **Auto-Copy Next System**: Sniffs your Elite Dangerous player journal in real-time. The exact second you drop into a new star system, Lighthouse ticks off your waypoint and **automatically copies the next system name to your clipboard**. Just open your galaxy map and paste!
-- **Off-Route Detection**: Jumps to the wrong star? Lighthouse instantly turns orange and warns you that you are off route, helping you correct your trajectory immediately.
-- **Deep Space EDSM Fallback**: Stuck in a completely uncharted sector? Lighthouse can triangulate your exact galactic (X, Y, Z) coordinates from your journal logs and use the EDSM API to find the nearest known star, automatically generating a rescue route from the middle of nowhere.
-- **Sleek HUD UI**: A gorgeous, glassmorphism design that sits directly over your cockpit.
-<img width="597" height="122" alt="in_route" src="https://github.com/user-attachments/assets/67395ddf-eb1e-4f57-a3a5-797f317e2d60" />
+### 🌌 Neutron Route Planner
+Seamlessly integrated with the Spansh API to provide instant, in-game neutron routing.
+- Automatically copies the next waypoint to your clipboard as soon as you jump.
+- Real-time High Value Target (HVT) alerts when entering a system with valuable scans.
+- **Smart Tracking**: If you venture off-route, Lighthouse knows. When you re-enter the route later, it instantly picks up where you left off and copies the next destination.
+- **Minimize to Status Bar**: Collapse the router into a tiny, unobtrusive status bar that just tells you your next jump and gets out of your view.
 
-- **Ultra-Minimal Mode**: Need to focus on the sights? Collapse the HUD into an ultra-minimal single-line readout (`Waypoint | Jumps | Next`) that takes up almost zero screen space.
+[Screenshot of Neutron Router here]
 
-<img width="599" height="71" alt="minimized" src="https://github.com/user-attachments/assets/e0da1401-3e0e-4523-8f99-418a84a2d72d" />
+### 🧬 Exo Tracker
+A zero-click exobiology companion. No more tabbing out to check what's on the planet you just probed.
+- Automatically hydrates your exobiology state from your ship's logs.
+- Scan a planet from orbit with your DSS, and Lighthouse instantly displays all biological signals and their scan progress.
+- Tracks your samples: 1/3, 2/3, or fully analyzed.
+- **Smart Wiping**: Automatically clears your biological tracking data the moment you leave the planet's orbit or jump to another system.
 
+[Screenshot of Exo Tracker here]
 
-## Installation
+### 🚢 POI & Fleet Carrier Radar
+Quickly find the nearest services when you're out in the black.
+- Search for nearby Drake-Class Fleet Carriers based on your real-time location.
+- **Active Services Filter**: Don't waste time docking at a carrier that doesn't have what you need. Lighthouse parses and highlights the crucial active services of nearby carriers (like Vista Genomics, Universal Cartographics, Refuel/Repair, and Shipyards).
 
-1. Head over to the [Releases page](https://github.com/BerryMelon/elite-lighthouse/releases).
-2. Download the latest `Elite Lighthouse Setup.exe` file.
-3. Run the installer. The app will automatically launch and stay on top of your Elite Dangerous window.
+[Screenshot of POI Search here]
 
-*Note: Elite Lighthouse is completely borderless and click-through. You can't accidentally click it and lose control of your ship unless you explicitly hover over its tiny window controls.*
+## Installation & Setup
 
-## Development
+1. **Prerequisites**: Ensure you have [Node.js](https://nodejs.org/) installed.
+2. **Clone the repository**:
+   ```bash
+   git clone <repository-url>
+   cd commander-hud
+   ```
+3. **Install Dependencies**:
+   ```bash
+   npm install
+   ```
+4. **Run Lighthouse**:
+   ```bash
+   npm run dev
+   ```
 
-If you want to build the project from source or contribute to it:
+*Note: Make sure you run Elite Dangerous in **Borderless Windowed** or **Windowed** mode for the overlay to sit on top of the game!*
 
-1. Clone the repository
-2. Run `npm install`
-3. Run `npm run dev` to start both the Vite React server and the Electron shell simultaneously.
+## Tech Stack
+- **Electron** (for transparent, click-through overlay capabilities and local journal reading)
+- **React 19 & Vite** (for ultra-fast rendering and modern UI state)
+- **Spansh & EDSM APIs** (for routing and system mapping)
 
-To compile a production build executable:
-```bash
-npm run dist
-```
-The output `.exe` will be located in the `dist-electron` folder.
-
-## Technologies Used
-
-- **React + Vite**: For a blazingly fast frontend UI
-- **Electron**: For native window layering and filesystem (Journal) access
-- **Tailwind-style CSS**: Custom styling optimized for transparent HUDs
-- **Spansh API & EDSM API**: The backbone of the galaxy's routing network
-
-Enjoy the black, Commander! o7
+## Philosophy
+Lighthouse is not meant to replace your massive third-party tools if you want to see every asteroid in the galaxy. It's meant to make your standard exploration loop (jumping, scanning, landing) feel completely integrated into the cockpit experience. Keep your eyes on the stars, Commander. o7
