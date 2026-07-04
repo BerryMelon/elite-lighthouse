@@ -638,7 +638,7 @@ function App() {
           const current = route[currentJumpIndex];
           const next = route[currentJumpIndex + 1];
           return (
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', pointerEvents: 'auto' }} onMouseEnter={enableMouse} onMouseLeave={disableMouse}>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', pointerEvents: 'auto' }} onMouseEnter={enableMouse} onMouseLeave={disableMouse}>
               <div className="flex justify-between items-center mb-2">
                 <h3 className="text-accent" style={{ fontWeight: 600, letterSpacing: '2px', margin: 0, textTransform: 'uppercase', fontSize: '1rem' }}>
                   Neutron Router
