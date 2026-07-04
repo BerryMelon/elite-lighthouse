@@ -246,6 +246,7 @@ ipcMain.handle('hydrate-exo', async () => {
         
         if (event.event === 'FSDJump' || event.event === 'SupercruiseEntry' || event.event === 'LeaveBody') {
           isLanded = false;
+          bioState = null;
         } else if (event.event === 'Touchdown') {
           isLanded = true;
           currentBody = event.Body;
