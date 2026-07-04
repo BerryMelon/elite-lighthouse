@@ -702,6 +702,7 @@ function App() {
                   )}
                 </div>
               </div>
+              </div>
               
               <div style={{ marginTop: 'auto', paddingTop: '0.5rem' }}>
                 <div style={{ fontSize: '0.85rem' }} className={isOffRoute ? 'text-warning' : (statusMessage.includes('failed') || statusMessage.includes('Err') ? 'text-warning' : 'text-success')}>
