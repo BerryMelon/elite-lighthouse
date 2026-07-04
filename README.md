@@ -42,6 +42,11 @@ Quickly find the nearest services when you're out in the black.
 
 ## Installation & Setup
 
+### Option 1: Pre-baked Executable (Recommended)
+You can simply download the pre-baked `.exe` from the [Releases page](https://github.com/BerryMelon/elite-lighthouse/releases) and run it! No setup required.
+
+### Option 2: Build from Source
+
 1. **Prerequisites**: Ensure you have [Node.js](https://nodejs.org/) installed.
 2. **Clone the repository**:
    ```bash
