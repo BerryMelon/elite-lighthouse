@@ -330,15 +330,13 @@ function App() {
     if (routeRef.current.length === 0 || isOffRouteRef.current) {
       setActiveTab('hvt');
     }
-    
-    setTimeout(() => {
-      setHvtAlerts(prev => prev.filter(a => a.id !== id));
-    }, 15000); // alerts disappear after 15 seconds
   };
 
   useEffect(() => {
     if (window.electronAPI) {
       window.electronAPI.onFsdJump((data: any) => {
+        setHvtAlerts([]); // Clear HVTs from previous system
+        
         // Handle FSD Jump logic (same as before)
         const currentRoute = routeRef.current;
         const currentIndex = currentJumpIndexRef.current;
