@@ -65,9 +65,9 @@ You can simply download the pre-baked `.exe` from the [Releases page](https://gi
 *Note: Make sure you run Elite Dangerous in **Borderless Windowed** or **Windowed** mode for the overlay to sit on top of the game!*
 
 ## Tech Stack
-- **Electron** (for transparent, click-through overlay capabilities and local journal reading)
-- **React 19 & Vite** (for ultra-fast rendering and modern UI state)
-- **Spansh & EDSM APIs** (for routing and system mapping)
+- **Electron**
+- **React 19 & Vite** 
+- **Spansh & EDSM APIs**
 
 ## Philosophy
 Lighthouse is not meant to replace your massive third-party tools if you want to see every asteroid in the galaxy. It's meant to make your standard exploration loop (jumping, scanning, landing) feel completely integrated into the cockpit experience. Keep your eyes on the stars, Commander. o7
