@@ -631,17 +631,15 @@ function App() {
           const current = route[currentJumpIndex];
           const next = route[currentJumpIndex + 1];
           return (
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', pointerEvents: 'auto' }} onMouseEnter={enableMouse} onMouseLeave={disableMouse}>
               <div className="flex justify-between items-center mb-2">
                 <h3 className="text-accent" style={{ fontWeight: 600, letterSpacing: '2px', margin: 0, textTransform: 'uppercase', fontSize: '1rem' }}>
                   Neutron Router
                 </h3>
-                <div className="flex" style={{ gap: '0.5rem' }}>
+                <div className="flex" style={{ gap: '0.5rem', marginRight: '2rem' }}>
                   <button 
                     onClick={stopRoute} 
-                    onMouseEnter={enableMouse}
-                    onMouseLeave={disableMouse}
-                    style={{ fontSize: '0.8rem', padding: '0.2rem 0.5rem', pointerEvents: 'auto' }}
+                    style={{ fontSize: '0.8rem', padding: '0.2rem 0.5rem', border: 'none', background: 'rgba(255,255,255,0.05)' }}
                   >
                     Abort
                   </button>
@@ -692,9 +690,13 @@ function App() {
                          </div>
                        </div>
                      </div>
-                  ) : (
-                     <div className="text-success" style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>ARRIVED</div>
                   )}
+                </div>
+              </div>
+              
+              <div className="flex justify-between items-center mt-4">
+                <div className="text-warning" style={{ fontSize: '0.9rem' }}>
+                  {isOffRoute ? `Off route! Jump to ${current.system} to resume.` : ''}
                 </div>
               </div>
             </div>
@@ -885,10 +887,10 @@ function App() {
   return (
     <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
       {/* Top Status float (Errors etc) */}
-      {(statusMessage || isOffRoute) && (
+      {statusMessage && (
         <div style={{ position: 'absolute', top: '10px', left: '50%', transform: 'translateX(-50%)', background: 'rgba(15,15,15,0.9)', padding: '0.3rem 1rem', borderRadius: '4px', border: '1px solid var(--glass-border)', zIndex: 100 }}>
-          <div className={statusMessage.includes('failed') || isOffRoute ? "text-warning" : "text-success"} style={{ fontSize: '0.9rem' }}>
-            {statusMessage ? statusMessage : isOffRoute ? `Off route! Jump to ${route[currentJumpIndex]?.system} to resume.` : ''}
+          <div className={statusMessage.includes('failed') ? "text-warning" : "text-success"} style={{ fontSize: '0.9rem' }}>
+            {statusMessage}
           </div>
         </div>
       )}
