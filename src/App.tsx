@@ -367,7 +367,6 @@ function App() {
               } else {
                 setStatusMessage(`Arrived at final destination: ${data.StarSystem}!`);
               }
-              setTimeout(() => setStatusMessage(''), 8000);
               
               // Check for HVT in arrival system
               if (nextWaypoint.hvt && nextWaypoint.hvt.length > 0) {
@@ -704,10 +703,9 @@ function App() {
                 </div>
               </div>
               
-                <div className="flex justify-between items-center mt-4">
-                  <div className="text-warning" style={{ fontSize: '0.9rem' }}>
-                    {isOffRoute ? `Off route! Jump to ${current.system} to resume.` : ''}
-                  </div>
+              <div style={{ marginTop: 'auto', paddingTop: '0.5rem' }}>
+                <div style={{ fontSize: '0.85rem' }} className={isOffRoute ? 'text-warning' : (statusMessage.includes('failed') || statusMessage.includes('Err') ? 'text-warning' : 'text-success')}>
+                  {isOffRoute ? `Off route! Jump to ${current.system} to resume.` : (statusMessage || 'On route - ready for next jump')}
                 </div>
               </div>
             </div>
@@ -898,9 +896,9 @@ function App() {
   return (
     <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
       {/* Top Status float (Errors etc) */}
-      {statusMessage && (
+      {statusMessage && !(activeTab === 'route' && hudMode && route.length > 0 && !isMinimized) && (
         <div style={{ position: 'absolute', top: '10px', left: '50%', transform: 'translateX(-50%)', background: 'rgba(15,15,15,0.9)', padding: '0.3rem 1rem', borderRadius: '4px', border: '1px solid var(--glass-border)', zIndex: 100 }}>
-          <div className={statusMessage.includes('failed') ? "text-warning" : "text-success"} style={{ fontSize: '0.9rem' }}>
+          <div className={statusMessage.includes('failed') || statusMessage.includes('Err') ? "text-warning" : "text-success"} style={{ fontSize: '0.9rem' }}>
             {statusMessage}
           </div>
         </div>
