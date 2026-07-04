@@ -422,34 +422,33 @@ function App() {
     setStatusMessage('Calculating route...');
 
     try {
-      const url = `https://spansh.co.uk/api/routes`;
-      
-      // We will proxy this as well to avoid CORS if necessary
+      const url = `https://spansh.co.uk/api/route`;
+      const params = new URLSearchParams();
+      params.append('efficiency', '60');
+      params.append('range', range);
+      params.append('from', source);
+      params.append('to', destination);
+      params.append('supercharge_multiplier', superchargeType === 'overcharge' ? '6' : '4');
+
       let data;
       if (window.electronAPI && window.electronAPI.fetchProxy) {
         const res = await window.electronAPI.fetchProxy(url, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-          body: JSON.stringify({
-            source, destination, range: parseFloat(range),
-            use_supercharge: superchargeType === 'overcharge' ? 0 : 1
-          })
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: params.toString()
         });
         data = res.data;
       } else {
         const response = await fetch(url, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-          body: JSON.stringify({
-            source, destination, range: parseFloat(range),
-            use_supercharge: superchargeType === 'overcharge' ? 0 : 1
-          })
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: params.toString()
         });
         data = await response.json();
       }
 
       if (data.error) {
-        if (!isFallback && (data.error.toLowerCase() === 'not found' || data.error.toLowerCase().includes('not found'))) {
+        if (!isFallback && (data.error.includes('Could not find starting system') || data.error.toLowerCase().includes('not found'))) {
           if (window.electronAPI) {
             const actualLoc = await window.electronAPI.getCurrentLocation();
             if (actualLoc && actualLoc.system.toLowerCase() === source.toLowerCase() && actualLoc.pos) {
