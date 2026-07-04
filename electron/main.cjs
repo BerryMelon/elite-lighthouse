@@ -163,6 +163,11 @@ function watchLatestJournal() {
                     }
                   }
 
+                  if (!isHvt && body.bioCount >= 5) {
+                    isHvt = true;
+                    hvtMessage = `High Bio Diversity (${body.bioCount} Signals)`;
+                  }
+
                   if (isHvt) {
                     fssTracker[event.BodyName].hvtAlerted = true;
                     BrowserWindow.getAllWindows().forEach(win => {

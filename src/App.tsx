@@ -302,6 +302,8 @@ function App() {
 
   const [isCalculating, setIsCalculating] = useState(false);
   const [isOffRoute, setIsOffRoute] = useState(false);
+  const isOffRouteRef = useRef(isOffRoute);
+  useEffect(() => { isOffRouteRef.current = isOffRoute; }, [isOffRoute]);
 
   // Exobiology State
   const [currentPlanetBio, setCurrentPlanetBio] = useState<{
@@ -323,6 +325,12 @@ function App() {
   const addHvtAlert = (message: string, submessage?: string, type: 'hvt' | 'bio' = 'hvt') => {
     const id = Date.now();
     setHvtAlerts(prev => [...prev, { id, message, submessage, type }]);
+    
+    // Auto-switch to HVT tab if an HVT is found and we are not on the neutron route
+    if (routeRef.current.length === 0 || isOffRouteRef.current) {
+      setActiveTab('hvt');
+    }
+    
     setTimeout(() => {
       setHvtAlerts(prev => prev.filter(a => a.id !== id));
     }, 15000); // alerts disappear after 15 seconds
