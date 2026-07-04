@@ -383,6 +383,12 @@ function App() {
           });
         }
       });
+
+      if (window.electronAPI.onRealtimeHvt) {
+        window.electronAPI.onRealtimeHvt((data: any) => {
+          addHvtAlert(`Live FSS Scan:`, `${data.message} on ${data.bodyName}`, 'hvt');
+        });
+      }
     }
   }, [source, destination, range]);
 

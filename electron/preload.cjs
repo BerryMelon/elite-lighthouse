@@ -17,5 +17,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   onJournalEvent: (callback) => {
     ipcRenderer.removeAllListeners('journal-event');
     ipcRenderer.on('journal-event', (event, data) => callback(data));
+  },
+  onRealtimeHvt: (callback) => {
+    ipcRenderer.removeAllListeners('realtime-hvt');
+    ipcRenderer.on('realtime-hvt', (event, data) => callback(data));
   }
 });

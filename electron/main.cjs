@@ -101,6 +101,7 @@ ipcMain.handle('get-current-location', async () => {
 // Watch the journal for new FSDJump events
 let currentWatcher = null;
 let lastSize = 0;
+let fssTracker = {};
 
 function watchLatestJournal() {
   const latestFile = getLatestJournal();
@@ -128,6 +129,51 @@ function watchLatestJournal() {
               ];
               
               if (relevantEvents.includes(event.event)) {
+                
+                // Track FSS data for HVT alerts
+                if (event.event === 'FSDJump') {
+                  fssTracker = {}; // reset on jump
+                } else if (event.event === 'Scan' && event.BodyName && event.PlanetClass) {
+                  if (!fssTracker[event.BodyName]) fssTracker[event.BodyName] = {};
+                  fssTracker[event.BodyName].planetClass = event.PlanetClass;
+                } else if (event.event === 'FSSBodySignals' && event.BodyName) {
+                  if (!fssTracker[event.BodyName]) fssTracker[event.BodyName] = {};
+                  const bioSignal = event.Signals && event.Signals.find(s => s.Type === 'Biological' || s.Type === '$SAA_SignalType_Biological;');
+                  if (bioSignal) {
+                    fssTracker[event.BodyName].bioCount = bioSignal.Count;
+                  }
+                }
+
+                // Check for HVT if we have FSS data
+                if (event.BodyName && fssTracker[event.BodyName] && !fssTracker[event.BodyName].hvtAlerted) {
+                  const body = fssTracker[event.BodyName];
+                  let isHvt = false;
+                  let hvtMessage = "";
+                  
+                  if (body.planetClass) {
+                    const pc = body.planetClass.toLowerCase();
+                    if (pc === 'earthlike body') {
+                      isHvt = true; hvtMessage = "Earth-Like World Candidate";
+                    } else if (pc === 'ammonia world') {
+                      isHvt = true; hvtMessage = "Ammonia World Candidate";
+                    } else if (pc === 'water world') {
+                      isHvt = true; hvtMessage = "Water World Candidate";
+                    } else if (pc === 'high metal content body' && body.bioCount === 1) {
+                      isHvt = true; hvtMessage = "Stratum Tectonicas Candidate (1 Bio)";
+                    }
+                  }
+
+                  if (isHvt) {
+                    fssTracker[event.BodyName].hvtAlerted = true;
+                    BrowserWindow.getAllWindows().forEach(win => {
+                      win.webContents.send('realtime-hvt', {
+                        bodyName: event.BodyName,
+                        message: hvtMessage
+                      });
+                    });
+                  }
+                }
+
                 BrowserWindow.getAllWindows().forEach(win => {
                   win.webContents.send('journal-event', event);
                   if (event.event === 'FSDJump') {
