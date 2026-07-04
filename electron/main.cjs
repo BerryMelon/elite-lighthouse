@@ -216,8 +216,17 @@ ipcMain.handle('hydrate-exo', async () => {
             bioState = { bodyName: 'Unknown Planet', totalSignals: 1, scanned: {} };
           }
           const species = event.Species_Localised || event.Species || 'Unknown';
-          const count = event.ScanType === 'Log' ? 1 : event.ScanType === 'Sample' ? 2 : 3;
-          bioState.scanned[species] = count;
+          
+          if (bioState.scanned[species] === undefined) {
+            bioState.scanned[species] = 0;
+          }
+          
+          if (event.ScanType === 'Sample') {
+            bioState.scanned[species] += 1;
+            if (bioState.scanned[species] > 2) bioState.scanned[species] = 2;
+          } else if (event.ScanType === 'Analyse' || event.ScanType === 'Analyze') {
+            bioState.scanned[species] = 3;
+          }
         } else if (event.event === 'Location') {
           if (event.Latitude !== undefined && event.Longitude !== undefined && !event.Docked) {
             isLanded = true;
