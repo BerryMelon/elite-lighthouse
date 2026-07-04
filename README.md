@@ -13,11 +13,17 @@ Designed with a premium glassmorphic aesthetic, it sits seamlessly over your gam
 ### 🌌 Neutron Route Planner
 Seamlessly integrated with the Spansh API to provide instant, in-game neutron routing.
 - Automatically copies the next waypoint to your clipboard as soon as you jump.
-- Real-time High Value Target (HVT) alerts when entering a system with valuable scans.
 - **Smart Tracking**: If you venture off-route, Lighthouse knows. When you re-enter the route later, it instantly picks up where you left off and copies the next destination.
 - **Minimize to Status Bar**: Collapse the router into a tiny, unobtrusive status bar that just tells you your next jump and gets out of your view.
 
 [Screenshot of Neutron Router here]
+
+### 🎯 High Value Target (HVT) Tracker
+Never miss a lucrative scan while traversing the galaxy.
+- Real-time High Value Target alerts when entering a system with valuable bodies (Earth-like Worlds, Water Worlds, Ammonia Worlds, etc.).
+- Automatically pops up in the HUD if you jump into a valuable system while off-route, ensuring you secure that scan data.
+
+[Screenshot of HVT Tracker here]
 
 ### 🧬 Exo Tracker
 A zero-click exobiology companion. No more tabbing out to check what's on the planet you just probed.
