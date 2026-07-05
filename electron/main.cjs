@@ -346,3 +346,32 @@ ipcMain.handle('hydrate-stats', async () => {
 
 
 
+
+let dragLoop = null;
+let dragOffset = { x: 0, y: 0 };
+
+ipcMain.on('start-drag', (event) => {
+  const win = BrowserWindow.fromWebContents(event.sender);
+  if (!win) return;
+  const { screen } = require('electron');
+  const cursor = screen.getCursorScreenPoint();
+  const bounds = win.getBounds();
+  dragOffset = { x: cursor.x - bounds.x, y: cursor.y - bounds.y };
+  if (dragLoop) clearInterval(dragLoop);
+  dragLoop = setInterval(() => {
+    const currentCursor = screen.getCursorScreenPoint();
+    win.setBounds({
+      x: currentCursor.x - dragOffset.x,
+      y: currentCursor.y - dragOffset.y,
+      width: bounds.width,
+      height: bounds.height
+    });
+  }, 1000 / 60);
+});
+
+ipcMain.on('stop-drag', () => {
+  if (dragLoop) {
+    clearInterval(dragLoop);
+    dragLoop = null;
+  }
+});

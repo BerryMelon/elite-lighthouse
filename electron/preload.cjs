@@ -6,6 +6,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   hydrateStats: () => ipcRenderer.invoke('hydrate-stats'),
   copyToClipboard: (text) => ipcRenderer.send('copy-to-clipboard', text),
   setIgnoreMouseEvents: (ignore, options) => ipcRenderer.send('set-ignore-mouse-events', ignore, options),
+  startDrag: () => ipcRenderer.send('start-drag'),
+  stopDrag: () => ipcRenderer.send('stop-drag'),
   fetchProxy: (url, options) => ipcRenderer.invoke('fetch-proxy', url, options),
   onPoiResults: (callback) => {
     ipcRenderer.removeAllListeners('poi-results');
