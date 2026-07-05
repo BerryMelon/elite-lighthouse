@@ -8,7 +8,7 @@
     "dev:vite": "vite",
     "dev:electron": "wait-on http-get://localhost:5173/ && cross-env NODE_ENV=development electron .",
     "dev": "concurrently \"npm run dev:vite\" \"npm run dev:electron\"",
-    "build": "tsc -b && vite build",
+    "build": "vite build",
     "dist": "npm run build && npx electron-packager . \"Elite Lighthouse\" --platform=win32 --arch=x64 --out=dist-electron --overwrite",
     "lint": "oxlint",
     "preview": "vite preview"
