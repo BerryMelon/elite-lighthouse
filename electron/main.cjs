@@ -294,7 +294,55 @@ ipcMain.handle('hydrate-exo', async () => {
   }
 });
 
+ipcMain.handle('hydrate-stats', async () => {
+  const recentFiles = getRecentJournals(30).reverse(); // newest to oldest
+  let jumps = 0;
+  let planetsScanned = new Set();
+  let biosScanned = 0;
+  let currentPos = null;
+  let dockFound = false;
+
+  for (const file of recentFiles) {
+    if (dockFound) break;
+    try {
+      const lines = fs.readFileSync(file, 'utf8').split('\n').filter(l => l.trim().length > 0);
+      for (let i = lines.length - 1; i >= 0; i--) {
+        try {
+          const event = JSON.parse(lines[i]);
+          
+          if (event.event === 'Docked' && event.StationType !== 'FleetCarrier' && event.StationType !== 'MegaShip') {
+            dockFound = true;
+            break;
+          }
+          
+          if (event.event === 'FSDJump') {
+            jumps++;
+          } else if (event.event === 'Scan' && event.PlanetClass && event.BodyName) {
+            planetsScanned.add(event.BodyName);
+          } else if (event.event === 'ScanOrganic' && (event.ScanType === 'Analyse' || event.ScanType === 'Analyze')) {
+            biosScanned++;
+          }
+          
+          if (!currentPos && (event.event === 'Location' || event.event === 'FSDJump') && event.StarPos) {
+             currentPos = event.StarPos;
+          }
+        } catch(e) {}
+      }
+    } catch(err) {}
+  }
+
+  let distToSol = 0;
+  if (currentPos) {
+    distToSol = Math.sqrt(currentPos[0]*currentPos[0] + currentPos[1]*currentPos[1] + currentPos[2]*currentPos[2]);
+  }
+
+  return {
+    jumps,
+    planetsScanned: planetsScanned.size,
+    biosScanned,
+    distanceToSol: distToSol.toFixed(2)
+  };
+});
 
 
 
-

@@ -138,6 +138,15 @@ const PoiIcon = () => (
   </svg>
 );
 
+const StatsIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="18" y1="20" x2="18" y2="10"></line>
+    <line x1="12" y1="20" x2="12" y2="4"></line>
+    <line x1="6" y1="20" x2="6" y2="14"></line>
+  </svg>
+);
+
+
 const SidebarIcon = ({ active, onClick, icon, title, enableMouse, disableMouse }: any) => (
   <button
     onClick={onClick}
@@ -182,8 +191,22 @@ function App() {
   const [hudMode, setHudMode] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   
-  const [activeTab, setActiveTab] = useState<'route' | 'hvt' | 'exo' | 'poi'>('route');
+  const [activeTab, setActiveTab] = useState<'route' | 'hvt' | 'exo' | 'poi' | 'stats'>('route');
+  const [statsData, setStatsData] = useState<any>(null);
   
+  const fetchStats = () => {
+    if (window.electronAPI && window.electronAPI.hydrateStats) {
+      window.electronAPI.hydrateStats().then((res: any) => {
+        if (res) setStatsData(res);
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'stats') {
+      fetchStats();
+    }
+  }, [activeTab]);
   const hudModeRef = useRef(hudMode);
   useEffect(() => {
     hudModeRef.current = hudMode;
@@ -444,6 +467,15 @@ function App() {
               }
             }
           });
+        }
+        
+        // Always attempt to re-hydrate stats on relevant events
+        if (['FSDJump', 'Scan', 'ScanOrganic', 'Docked'].includes(data.event)) {
+          if (window.electronAPI.hydrateStats) {
+            window.electronAPI.hydrateStats().then((res: any) => {
+              if (res) setStatsData(res);
+            });
+          }
         }
       });
 
@@ -925,6 +957,38 @@ function App() {
             </div>
           </div>
         );
+      case 'stats':
+        return (
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+            <h3 className="text-accent mb-2" style={{ fontWeight: 600, letterSpacing: '2px', margin: 0, textTransform: 'uppercase', fontSize: '1rem' }}>Session Statistics</h3>
+            <div style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', marginBottom: '1rem' }}>Tracking progress since last station dock</div>
+            
+            <div style={{ flex: 1, overflowY: 'auto', pointerEvents: 'auto', display: 'flex', flexDirection: 'column', gap: '0.8rem' }} onMouseEnter={enableMouse} onMouseLeave={disableMouse}>
+              {statsData ? (
+                <>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem' }}>
+                    <span style={{ color: 'var(--text-secondary)' }}>Distance from Sol</span>
+                    <span className="text-accent" style={{ fontWeight: 'bold' }}>{statsData.distanceToSol} Ly</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem' }}>
+                    <span style={{ color: 'var(--text-secondary)' }}>Total Jumps</span>
+                    <span className="text-accent" style={{ fontWeight: 'bold' }}>{statsData.jumps}</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem' }}>
+                    <span style={{ color: 'var(--text-secondary)' }}>Unique Planets Scanned</span>
+                    <span className="text-accent" style={{ fontWeight: 'bold' }}>{statsData.planetsScanned}</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem' }}>
+                    <span style={{ color: 'var(--text-secondary)' }}>Bios Fully Analyzed</span>
+                    <span className="text-success" style={{ fontWeight: 'bold' }}>{statsData.biosScanned}</span>
+                  </div>
+                </>
+              ) : (
+                <div style={{ color: 'var(--text-secondary)', textAlign: 'center', marginTop: '2rem' }}>Loading statistics...</div>
+              )}
+            </div>
+          </div>
+        );
     }
   };
 
@@ -956,6 +1020,8 @@ function App() {
         return <div style={{ color: 'var(--success-color)', fontWeight: 'bold', textAlign: 'center', width: '100%' }}>Exo Tracker - {scanned}/{total} Complete</div>;
       case 'poi':
         return <div style={{ color: 'var(--text-secondary)', textAlign: 'center', width: '100%' }}>{isSearchingPoi ? 'Searching POIs...' : (poiResults ? `${poiResults.length} Fleet Carriers found` : 'POI Search Ready')}</div>;
+      case 'stats':
+        return <div style={{ color: 'var(--accent-color)', textAlign: 'center', width: '100%' }}>Stats: {statsData?.jumps || 0} Jumps, {statsData?.planetsScanned || 0} Planets, {statsData?.biosScanned || 0} Bios</div>;
     }
   };
 
@@ -979,6 +1045,7 @@ function App() {
             <SidebarIcon active={activeTab==='hvt'} onClick={() => setActiveTab('hvt')} icon={<HvtIcon/>} title="System Info (HVT)" enableMouse={enableMouse} disableMouse={disableMouse} />
             <SidebarIcon active={activeTab==='exo'} onClick={() => setActiveTab('exo')} icon={<ExoIcon/>} title="Exo Tracker" enableMouse={enableMouse} disableMouse={disableMouse} />
             <SidebarIcon active={activeTab==='poi'} onClick={() => setActiveTab('poi')} icon={<PoiIcon/>} title="Nearby POI Search" enableMouse={enableMouse} disableMouse={disableMouse} />
+            <SidebarIcon active={activeTab==='stats'} onClick={() => setActiveTab('stats')} icon={<StatsIcon/>} title="Session Statistics" enableMouse={enableMouse} disableMouse={disableMouse} />
             <div style={{ flex: 1 }} />
             <div style={{ fontSize: '0.6em', opacity: 0.5, marginBottom: '0.5rem', WebkitAppRegion: 'no-drag' as any }}>v1.0</div>
           </div>
