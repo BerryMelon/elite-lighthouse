@@ -35,7 +35,7 @@ body {
   padding: 1rem;
   color: var(--text-primary);
   /* Window drag region */
-  -webkit-app-region: drag;
+  /* -webkit-app-region: drag; */
   position: relative;
 }
 

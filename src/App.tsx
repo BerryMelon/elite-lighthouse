@@ -722,7 +722,7 @@ function App() {
           return (
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', pointerEvents: 'auto' }} onMouseEnter={enableMouse} onMouseLeave={disableMouse}>
               <div className="flex justify-between items-center mb-2">
-                <h3 className="text-accent" onMouseEnter={enableMouse} onMouseLeave={disableMouse} style={{ fontWeight: 600, letterSpacing: '2px', margin: 0, textTransform: 'uppercase', fontSize: '1rem', WebkitAppRegion: 'drag' as any }}>
+                <h3 className="text-accent" onMouseEnter={enableMouse} onMouseLeave={disableMouse} style={{ fontWeight: 600, letterSpacing: '2px', margin: 0, textTransform: 'uppercase', fontSize: '1rem', WebkitAppRegion: 'drag' as any, pointerEvents: 'auto' }}>
                   Neutron Router
                 </h3>
                 <div className="flex" style={{ gap: '0.5rem', marginRight: '2rem' }}>
@@ -799,7 +799,7 @@ function App() {
           return (
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
               <div className="flex justify-between items-center mb-2">
-                <h3 className="text-accent" onMouseEnter={enableMouse} onMouseLeave={disableMouse} style={{ fontWeight: 600, letterSpacing: '2px', margin: 0, textTransform: 'uppercase', fontSize: '1rem', WebkitAppRegion: 'drag' as any }}>
+                <h3 className="text-accent" onMouseEnter={enableMouse} onMouseLeave={disableMouse} style={{ fontWeight: 600, letterSpacing: '2px', margin: 0, textTransform: 'uppercase', fontSize: '1rem', WebkitAppRegion: 'drag' as any, pointerEvents: 'auto' }}>
                   Neutron Router
                 </h3>
               </div>
@@ -844,7 +844,7 @@ function App() {
         return (
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
             <div className="flex justify-between items-center" style={{ marginBottom: '1rem' }}>
-              <h3 className="text-accent" onMouseEnter={enableMouse} onMouseLeave={disableMouse} style={{ fontWeight: 600, letterSpacing: '2px', margin: 0, textTransform: 'uppercase', fontSize: '1rem', WebkitAppRegion: 'drag' as any }}>High Value Targets</h3>
+              <h3 className="text-accent" onMouseEnter={enableMouse} onMouseLeave={disableMouse} style={{ fontWeight: 600, letterSpacing: '2px', margin: 0, textTransform: 'uppercase', fontSize: '1rem', WebkitAppRegion: 'drag' as any, pointerEvents: 'auto' }}>High Value Targets</h3>
             </div>
             <div style={{ flex: 1, overflowY: 'auto', pointerEvents: 'auto' }} onMouseEnter={enableMouse} onMouseLeave={disableMouse}>
               {hvtAlerts.length === 0 ? (
@@ -868,7 +868,7 @@ function App() {
         if (!currentPlanetBio) {
           return (
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-              <h3 className="text-accent mb-2" onMouseEnter={enableMouse} onMouseLeave={disableMouse} style={{ fontWeight: 600, letterSpacing: '2px', margin: 0, textTransform: 'uppercase', fontSize: '1rem', WebkitAppRegion: 'drag' as any }}>Exo Tracker</h3>
+              <h3 className="text-accent mb-2" onMouseEnter={enableMouse} onMouseLeave={disableMouse} style={{ fontWeight: 600, letterSpacing: '2px', margin: 0, textTransform: 'uppercase', fontSize: '1rem', WebkitAppRegion: 'drag' as any, pointerEvents: 'auto' }}>Exo Tracker</h3>
               <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <div style={{ color: 'var(--text-secondary)' }}>Please land on a planet to begin surface scanning...</div>
               </div>
@@ -877,7 +877,7 @@ function App() {
         }
         return (
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-            <h3 className="text-accent mb-2" onMouseEnter={enableMouse} onMouseLeave={disableMouse} style={{ fontWeight: 600, letterSpacing: '2px', margin: 0, textTransform: 'uppercase', fontSize: '1rem', WebkitAppRegion: 'drag' as any }}>Exo Tracker</h3>
+            <h3 className="text-accent mb-2" onMouseEnter={enableMouse} onMouseLeave={disableMouse} style={{ fontWeight: 600, letterSpacing: '2px', margin: 0, textTransform: 'uppercase', fontSize: '1rem', WebkitAppRegion: 'drag' as any, pointerEvents: 'auto' }}>Exo Tracker</h3>
             <div className="text-secondary mb-2" style={{ fontWeight: 'bold', fontSize: '0.85rem' }}>{currentPlanetBio.bodyName}</div>
             <div style={{ display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
               <div className="flex" style={{ flexWrap: 'wrap', gap: '1rem' }}>
@@ -889,7 +889,7 @@ function App() {
                    const isComplete = count >= 3;
                    return (
                      <div key={i} className={isComplete ? "text-success" : "text-accent"} style={{ fontSize: '0.85rem', flex: '1 1 45%' }}>
-                       {isComplete ? `âœ“ ${species}` : `ðŸ§¬ ${species} (${count}/3)`}
+                       {isComplete ? `??${species}` : `?§¬ ${species} (${count}/3)`}
                      </div>
                    );
                  } else {
@@ -907,7 +907,7 @@ function App() {
       case 'poi':
         return (
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-            <h3 className="text-accent mb-2" onMouseEnter={enableMouse} onMouseLeave={disableMouse} style={{ fontWeight: 600, letterSpacing: '2px', margin: 0, textTransform: 'uppercase', fontSize: '1rem', WebkitAppRegion: 'drag' as any }}>Nearby POI Search</h3>
+            <h3 className="text-accent mb-2" onMouseEnter={enableMouse} onMouseLeave={disableMouse} style={{ fontWeight: 600, letterSpacing: '2px', margin: 0, textTransform: 'uppercase', fontSize: '1rem', WebkitAppRegion: 'drag' as any, pointerEvents: 'auto' }}>Nearby POI Search</h3>
             <div className="flex mb-4" style={{ gap: '1.5rem', marginTop: '1rem' }}>
               <button onClick={searchCarriers} onMouseEnter={enableMouse} onMouseLeave={disableMouse} disabled={isSearchingPoi} style={{ pointerEvents: 'auto', padding: 0, fontSize: '0.8rem', background: 'transparent', border: 'none', boxShadow: 'none', color: (poiResults !== null || isSearchingPoi) ? 'var(--accent-color)' : 'var(--text-secondary)', fontWeight: 'bold' }}>{isSearchingPoi ? 'SEARCHING...' : 'FLEET CARRIERS'}</button>
               <button disabled style={{ padding: 0, fontSize: '0.8rem', opacity: 0.5, background: 'transparent', border: 'none', boxShadow: 'none', color: 'var(--text-secondary)', fontWeight: 'bold' }}>SCENIC VIEWS (SOON)</button>
@@ -960,7 +960,7 @@ function App() {
       case 'stats':
         return (
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-            <h3 className="text-accent mb-2" onMouseEnter={enableMouse} onMouseLeave={disableMouse} style={{ fontWeight: 600, letterSpacing: '2px', margin: 0, textTransform: 'uppercase', fontSize: '1rem', WebkitAppRegion: 'drag' as any }}>Session Statistics</h3>
+            <h3 className="text-accent mb-2" onMouseEnter={enableMouse} onMouseLeave={disableMouse} style={{ fontWeight: 600, letterSpacing: '2px', margin: 0, textTransform: 'uppercase', fontSize: '1rem', WebkitAppRegion: 'drag' as any, pointerEvents: 'auto' }}>Session Statistics</h3>
             <div style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', marginBottom: '1rem' }}>Tracking progress since last station dock</div>
             
             <div style={{ flex: 1, overflowY: 'auto', pointerEvents: 'auto', display: 'flex', flexDirection: 'column', gap: '0.8rem' }} onMouseEnter={enableMouse} onMouseLeave={disableMouse}>
@@ -1036,11 +1036,11 @@ function App() {
         </div>
       )}
 
-      <div className="glass-panel" style={{ width: '100%', flex: 1, display: 'flex', boxSizing: 'border-box', padding: 0, overflow: 'hidden' }}>
+      <div className="glass-panel" onMouseEnter={enableMouse} onMouseLeave={disableMouse} style={{ width: '100%', flex: 1, display: 'flex', boxSizing: 'border-box', padding: 0, overflow: 'hidden' }}>
         
         {/* Sidebar */}
         {!isMinimized && (
-          <div style={{ width: '45px', borderRight: '1px solid rgba(255,255,255,0.1)', display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '0', WebkitAppRegion: 'drag' as any }}>
+          <div style={{ width: '45px', borderRight: '1px solid rgba(255,255,255,0.1)', display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '0', WebkitAppRegion: 'drag' as any, pointerEvents: 'auto' }}>
             <SidebarIcon active={activeTab==='route'} onClick={() => setActiveTab('route')} icon={<RouteIcon/>} title="Route Planner" enableMouse={enableMouse} disableMouse={disableMouse} />
             <SidebarIcon active={activeTab==='hvt'} onClick={() => setActiveTab('hvt')} icon={<HvtIcon/>} title="System Info (HVT)" enableMouse={enableMouse} disableMouse={disableMouse} />
             <SidebarIcon active={activeTab==='exo'} onClick={() => setActiveTab('exo')} icon={<ExoIcon/>} title="Exo Tracker" enableMouse={enableMouse} disableMouse={disableMouse} />
